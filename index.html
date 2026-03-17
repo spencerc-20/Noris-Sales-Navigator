@@ -319,6 +319,44 @@
   .course-panel { display: none; }
   .course-panel.active { display: block; }
 
+  /* ─── PAST ATTENDEES LINK ─── */
+  .past-attendees-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    margin-bottom: 24px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .past-attendees-link:hover {
+    border-color: var(--border-bright);
+    background: rgba(255,255,255,0.04);
+  }
+  .past-attendees-icon { font-size: 22px; flex-shrink: 0; }
+  .past-attendees-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+  }
+  .past-attendees-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .past-attendees-arrow {
+    margin-left: auto;
+    font-size: 16px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+  .past-attendees-link:hover .past-attendees-arrow { color: var(--text-dim); }
+
   /* ─── COURSE TABLE ─── */
   .course-table {
     width: 100%;
@@ -1475,6 +1513,15 @@
       <div class="type-tab" onclick="showCourseType('webinars')">💻 Webinars & Study Clubs</div>
       <div class="type-tab" onclick="showCourseType('packages')">📦 Packages</div>
     </div>
+
+    <a href="https://docs.google.com/spreadsheets/d/1NOc3eHGAwD7V8HeyOAo19BHFopUvkjRxiQdsDeRbOlI/edit?usp=sharing" target="_blank" class="past-attendees-link">
+      <span class="past-attendees-icon">📋</span>
+      <div>
+        <div class="past-attendees-title">Past Course Attendees</div>
+        <div class="past-attendees-sub">View the full attendee history spreadsheet</div>
+      </div>
+      <span class="past-attendees-arrow">↗</span>
+    </a>
 
     <!-- CADAVER -->
     <div id="edu-cadaver" class="course-panel active">
