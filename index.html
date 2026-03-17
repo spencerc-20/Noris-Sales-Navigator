@@ -546,11 +546,138 @@
   .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .col-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 
+  /* ─── HAMBURGER + MOBILE OVERLAY ─── */
+  .hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: background 0.15s;
+  }
+  .hamburger-btn:hover { background: rgba(255,255,255,0.06); }
+  .hamburger-btn svg { display: block; }
+
+  #mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(2px);
+  }
+  #mobile-overlay.open { display: block; }
+
+  .topbar-left { flex: 1; min-width: 0; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+  /* ─── BREAKPOINT: ≤1100px (small laptop / large tablet) ─── */
   @media (max-width: 1100px) {
-    .dash-stats { grid-template-columns: repeat(2, 1fr); }
     .tools-hero { grid-template-columns: repeat(2, 1fr); }
     .col-2, .col-3 { grid-template-columns: 1fr; }
     .link-cols { grid-template-columns: 1fr; }
+  }
+
+  /* ─── BREAKPOINT: ≤1024px (tablet — sidebar collapses) ─── */
+  @media (max-width: 1024px) {
+    #sidebar {
+      transform: translateX(-220px);
+      transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+      z-index: 200;
+    }
+    #sidebar.open {
+      transform: translateX(0);
+      box-shadow: 6px 0 32px rgba(0,0,0,0.5);
+    }
+    #main { margin-left: 0; }
+    .hamburger-btn { display: flex; align-items: center; justify-content: center; }
+    .topbar { padding: 13px 20px; }
+    .topbar-date { display: none; }
+    .topbar-quick { display: none; }
+    .search-label { display: none; }
+    .search-kbd { display: none; }
+    .search-trigger { padding: 8px 10px; gap: 0; }
+    .dash-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ─── BREAKPOINT: ≤768px (mobile) ─── */
+  @media (max-width: 768px) {
+    .page { padding: 16px; }
+    .page-header { margin-bottom: 18px; }
+    .page-header h1 { font-size: 22px; }
+    .page-header p { font-size: 13px; }
+
+    .tools-hero { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+    .card-grid-3 { grid-template-columns: 1fr 1fr; }
+    .dso-grid { grid-template-columns: 1fr; }
+
+    /* Education sub-tabs: horizontal scroll instead of wrap */
+    .course-type-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 6px;
+      margin-bottom: 18px;
+      scrollbar-width: none;
+    }
+    .course-type-tabs::-webkit-scrollbar { display: none; }
+    .type-tab { flex-shrink: 0; min-height: 40px; display: flex; align-items: center; }
+
+    /* Bigger touch targets */
+    .link-item { padding: 14px; min-height: 48px; }
+    .nav-item { padding: 12px 20px; min-height: 44px; }
+    .btn-sm { padding: 8px 12px; font-size: 12px; min-height: 36px; display: inline-flex; align-items: center; }
+    .quick-btn { padding: 9px 14px; }
+
+    /* Dashboard upcoming row: allow wrapping */
+    .recent-row { flex-wrap: wrap; gap: 6px; padding: 11px 14px; }
+    .recent-date { font-size: 11px; }
+
+    /* Announcements: stack date above content */
+    .ann-entry { flex-direction: column; gap: 4px; }
+    .ann-date-col { width: auto; padding-top: 0; }
+
+    /* Stat cards */
+    .stat-value { font-size: 22px; }
+    .stat-card { padding: 14px; }
+
+    /* Territory */
+    .rep-grid { grid-template-columns: 1fr; }
+    .admin-notice { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+    /* Misc */
+    .section-title { font-size: 11px; margin: 20px 0 12px; }
+    .topbar { padding: 12px 16px; }
+
+    /* Training sessions */
+    .training-session { flex-wrap: wrap; }
+    .session-links { flex-wrap: wrap; }
+  }
+
+  /* ─── BREAKPOINT: ≤480px (iPhone 390px) ─── */
+  @media (max-width: 480px) {
+    .page { padding: 12px; }
+    .page-header h1 { font-size: 20px; }
+    .dash-stats { gap: 8px; }
+    .stat-value { font-size: 20px; }
+    .card-grid-3 { grid-template-columns: 1fr; }
+
+    /* Search: slide up from bottom on small phones */
+    .search-overlay { padding-top: 0; align-items: flex-end; }
+    .search-modal { border-radius: 16px 16px 0 0; max-height: 82vh; display: flex; flex-direction: column; }
+    .search-results { flex: 1; }
+
+    /* Tools hero cards: reduce padding */
+    .tool-hero-card { padding: 16px; }
+
+    /* Table columns: prioritize key info */
+    .course-table th:nth-child(4),
+    .course-table td:nth-child(4) { display: none; }
   }
 
   .pill {
@@ -1168,13 +1295,18 @@
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div>
+    <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+    <div class="topbar-left">
       <div class="topbar-title" id="topbar-title">Dashboard</div>
       <div class="topbar-date" id="topbar-date"></div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;">
+    <div class="topbar-right">
       <div class="search-trigger" onclick="openSearch()">
-        <span>🔍</span> Search everything&hellip; <kbd>⌘K</kbd>
+        <span>🔍</span><span class="search-label">&nbsp;Search everything&hellip;</span><kbd class="search-kbd" style="margin-left:6px">⌘K</kbd>
       </div>
       <div class="topbar-quick">
         <a href="https://spencerc-20.github.io/Sales-Forecasts/" target="_blank" class="quick-btn secondary">📊 Forecasting</a>
@@ -2427,6 +2559,9 @@
 
 </div><!-- /main -->
 
+<!-- ─── MOBILE SIDEBAR OVERLAY ─── -->
+<div id="mobile-overlay" onclick="closeSidebar()"></div>
+
 <!-- ─── PIN MODAL ─── -->
 <div class="pin-modal-overlay" id="pin-modal-overlay">
   <div class="pin-modal">
@@ -2529,13 +2664,33 @@
     }).join('');
   }
 
+  // ─── Mobile sidebar ───
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobile-overlay');
+    const isOpen = sidebar.classList.toggle('open');
+    overlay.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('mobile-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close sidebar on ESC
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSidebar();
+  });
+
   // ─── Navigation ───
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    
+
     document.getElementById('page-' + id).classList.add('active');
-    
+
     const titles = {
       dashboard: 'Dashboard',
       education: 'Education',
@@ -2546,13 +2701,19 @@
       'territories': 'Territory Map'
     };
     document.getElementById('topbar-title').textContent = titles[id] || id;
-    
+
     // Find and activate sidebar nav item
     document.querySelectorAll('.nav-item').forEach(n => {
       if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
         n.classList.add('active');
       }
     });
+
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth <= 1024) closeSidebar();
+
+    // Scroll to top on page switch
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
   // ─── Education sub-tabs ───
