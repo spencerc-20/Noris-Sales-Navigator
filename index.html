@@ -827,6 +827,269 @@
     line-height: 1;
   }
 
+  /* ─── TERRITORY MAP ─── */
+  .territory-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .team-filter-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--surface);
+    transition: all 0.15s;
+  }
+  .team-filter-btn:hover { color: #fff; border-color: var(--border-bright); }
+  .team-filter-btn.active { color: #fff; border-color: transparent; }
+  .territory-search {
+    flex: 1;
+    min-width: 180px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .territory-search:focus { border-color: var(--border-bright); }
+  .territory-search::placeholder { color: var(--text-muted); }
+  .territory-admin-btn {
+    margin-left: auto;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .territory-admin-btn:hover { color: #fff; border-color: var(--border-bright); }
+  .territory-admin-btn.active {
+    background: var(--red-glow);
+    border-color: rgba(200,16,46,0.4);
+    color: #f87171;
+  }
+
+  .rep-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .rep-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    border-left: 3px solid;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .rep-card:hover { background: var(--surface2); }
+  .rep-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .rep-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .team-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .rep-territories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .territory-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    line-height: 1.3;
+  }
+  .territory-tag .tag-note {
+    color: var(--text-muted);
+    font-size: 10px;
+    display: block;
+  }
+  .rep-card-empty { color: var(--text-muted); font-size: 12px; font-style: italic; }
+
+  /* Admin edit table */
+  .admin-notice {
+    background: rgba(200,16,46,0.08);
+    border: 1px solid rgba(200,16,46,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #f87171;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .admin-notice-text { display: flex; align-items: center; gap: 8px; }
+  .admin-actions { display: flex; gap: 8px; }
+  .admin-action-btn {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+  .admin-action-btn.copy { background: var(--red); color: #fff; }
+  .admin-action-btn.copy:hover { background: var(--red-dark); }
+  .admin-action-btn.add { background: rgba(255,255,255,0.08); color: var(--text-dim); border: 1px solid var(--border); }
+  .admin-action-btn.add:hover { color: #fff; border-color: var(--border-bright); }
+
+  .edit-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+  .edit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .edit-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .edit-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .edit-table tr:last-child td { border-bottom: none; }
+  .edit-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .edit-input:focus { border-color: var(--red); }
+  .edit-delete-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-muted);
+    padding: 5px 9px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.15s;
+  }
+  .edit-delete-btn:hover { background: rgba(200,16,46,0.1); border-color: rgba(200,16,46,0.4); color: #f87171; }
+
+  /* PIN modal */
+  .pin-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+  }
+  .pin-modal-overlay.open { display: flex; }
+  .pin-modal {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    padding: 32px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  }
+  .pin-modal h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .pin-modal p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+  .pin-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 18px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 0.2em;
+    outline: none;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+  }
+  .pin-input:focus { border-color: var(--red); }
+  .pin-error { font-size: 11px; color: #f87171; min-height: 16px; margin-bottom: 12px; }
+  .pin-submit {
+    width: 100%;
+    padding: 10px;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 8px;
+  }
+  .pin-submit:hover { background: var(--red-dark); }
+  .pin-cancel { font-size: 12px; color: var(--text-muted); cursor: pointer; }
+  .pin-cancel:hover { color: var(--text); }
+
   /* scrollbar */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -893,6 +1156,9 @@
     </div>
     <div class="nav-item" onclick="showPage('sales-assets')">
       <span class="icon">📁</span> Sales Assets
+    </div>
+    <div class="nav-item" onclick="showPage('territories')">
+      <span class="icon">🗺️</span> Territory Map
     </div>
   </nav>
 </nav>
@@ -2134,7 +2400,45 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════
+       TERRITORY MAP
+  ═══════════════════════════════════════════ -->
+  <div id="page-territories" class="page">
+    <div class="page-header">
+      <h1>Territory Map</h1>
+      <p>2026 rep territory allocations. Admin mode required to edit.</p>
+    </div>
+
+    <div class="territory-controls">
+      <button class="team-filter-btn active" onclick="setTeamFilter('ALL', this)">All</button>
+      <button class="team-filter-btn" onclick="setTeamFilter('INSIDE', this)">Inside</button>
+      <button class="team-filter-btn" onclick="setTeamFilter('CENTRAL', this)">Central</button>
+      <button class="team-filter-btn" onclick="setTeamFilter('EAST', this)">East</button>
+      <button class="team-filter-btn" onclick="setTeamFilter('CALIFORNIA', this)">California</button>
+      <button class="team-filter-btn" onclick="setTeamFilter('TX', this)">TX</button>
+      <button class="team-filter-btn" onclick="setTeamFilter('EILEEN', this)">Eileen</button>
+      <button class="team-filter-btn" onclick="setTeamFilter('CANADA', this)">Canada</button>
+      <input type="text" class="territory-search" id="territory-search" placeholder="Search rep or territory…" oninput="renderTerritoryView()">
+      <button class="territory-admin-btn" id="admin-toggle-btn" onclick="handleAdminToggle()">🔒 Admin</button>
+    </div>
+
+    <div id="territory-view"></div>
+  </div>
+
 </div><!-- /main -->
+
+<!-- ─── PIN MODAL ─── -->
+<div class="pin-modal-overlay" id="pin-modal-overlay">
+  <div class="pin-modal">
+    <h3>🔒 Admin Access</h3>
+    <p>Enter your admin PIN to unlock edit mode.</p>
+    <input type="password" class="pin-input" id="pin-input" placeholder="••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')submitPin()">
+    <div class="pin-error" id="pin-error"></div>
+    <button class="pin-submit" onclick="submitPin()">Unlock</button>
+    <div class="pin-cancel" onclick="closePinModal()">Cancel</div>
+  </div>
+</div>
 
 <!-- ─── SEARCH OVERLAY ─── -->
 <div class="search-overlay" id="search-overlay" onclick="handleOverlayClick(event)">
@@ -2238,7 +2542,8 @@
       'lab-dso': 'Lab & DSO',
       tools: 'Tools',
       'sales-training': 'Sales Team Training',
-      'sales-assets': 'Sales Assets'
+      'sales-assets': 'Sales Assets',
+      'territories': 'Territory Map'
     };
     document.getElementById('topbar-title').textContent = titles[id] || id;
     
@@ -2523,6 +2828,267 @@
       openSearch();
     }
   });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  TERRITORY DATA — admin can edit via UI, or edit this array
+  //  directly and push. Fields: agent, team, territory, notes
+  // ═══════════════════════════════════════════════════════════════
+  // ⚠️  ADMIN PIN — change this to something only you know
+  const ADMIN_PIN = 'noris2026';
+
+  const DEFAULT_TERRITORY_DATA = [
+    { agent: 'Emma',        team: 'INSIDE',     territory: 'Alabama',             notes: '' },
+    { agent: 'Emma',        team: 'INSIDE',     territory: 'Alaska',              notes: '' },
+    { agent: 'Carson',      team: 'INSIDE',     territory: 'Arizona',             notes: '' },
+    { agent: 'Carson',      team: 'INSIDE',     territory: 'Arkansas',            notes: '' },
+    { agent: 'Open',        team: 'TX',         territory: 'Austin, TX',          notes: '' },
+    { agent: 'Emma',        team: 'INSIDE',     territory: 'Colorado',            notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Connecticut',         notes: '' },
+    { agent: 'Kaylie G',    team: 'TX',         territory: 'Dallas, TX',          notes: '' },
+    { agent: 'Charlotte L', team: 'INSIDE',     territory: 'DC',                  notes: '' },
+    { agent: 'Charlotte L', team: 'INSIDE',     territory: 'Delaware',            notes: '' },
+    { agent: 'Misha',       team: 'CENTRAL',    territory: 'Georgia',             notes: '' },
+    { agent: 'Emma',        team: 'INSIDE',     territory: 'Hawaii',              notes: '' },
+    { agent: 'Carolina',    team: 'INSIDE',     territory: 'Houston, TX',         notes: '' },
+    { agent: 'Constance',   team: 'INSIDE',     territory: 'Idaho',               notes: '' },
+    { agent: 'Sam',         team: 'CENTRAL',    territory: 'Illinois',            notes: '' },
+    { agent: 'Charlotte L', team: 'INSIDE',     territory: 'Indiana',             notes: '' },
+    { agent: 'Carolina',    team: 'INSIDE',     territory: 'Iowa',                notes: '' },
+    { agent: 'Charlotte L', team: 'INSIDE',     territory: 'Kansas',              notes: '' },
+    { agent: 'Beka',        team: 'CENTRAL',    territory: 'Kentucky',            notes: '' },
+    { agent: 'Eileen',      team: 'EILEEN',     territory: 'Long Island',         notes: '' },
+    { agent: 'Constance',   team: 'INSIDE',     territory: 'Louisiana',           notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Maine',               notes: '' },
+    { agent: 'Charlotte L', team: 'INSIDE',     territory: 'Maryland',            notes: '' },
+    { agent: 'Ben',         team: 'EAST',       territory: 'Massachusetts',       notes: '' },
+    { agent: 'Emma',        team: 'INSIDE',     territory: 'Michigan',            notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Minnesota',           notes: '' },
+    { agent: 'Constance',   team: 'INSIDE',     territory: 'Mississippi',         notes: '' },
+    { agent: 'Sam',         team: 'CENTRAL',    territory: 'Missouri',            notes: '' },
+    { agent: 'Emma',        team: 'INSIDE',     territory: 'Montana',             notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Nebraska',            notes: '' },
+    { agent: 'Jennifer',    team: 'CALIFORNIA', territory: 'Nevada',              notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'New Hampshire',       notes: '' },
+    { agent: 'Eileen',      team: 'EILEEN',     territory: 'New Jersey',          notes: '' },
+    { agent: 'Carson',      team: 'INSIDE',     territory: 'New Mexico',          notes: '' },
+    { agent: 'Eileen',      team: 'EILEEN',     territory: 'New York',            notes: '' },
+    { agent: 'Tara',        team: 'EAST',       territory: 'North Carolina',      notes: '' },
+    { agent: 'Constance',   team: 'INSIDE',     territory: 'North Dakota',        notes: '' },
+    { agent: 'Brent',       team: 'CALIFORNIA', territory: 'NE California',       notes: '' },
+    { agent: 'Carolina',    team: 'INSIDE',     territory: 'North FL',            notes: 'North of Palm Beach to Tallahassee' },
+    { agent: 'Nick (RM)',   team: 'CENTRAL',    territory: 'Ohio',                notes: 'Morgan, Fioritto and Marshall – Charlotte' },
+    { agent: 'Carson',      team: 'INSIDE',     territory: 'Oklahoma',            notes: '' },
+    { agent: 'Marianne',    team: 'CANADA',     territory: 'Ontario',             notes: '' },
+    { agent: 'Constance',   team: 'INSIDE',     territory: 'Oregon',              notes: '' },
+    { agent: 'Malcom',      team: 'EILEEN',     territory: 'Pennsylvania',        notes: '' },
+    { agent: 'Carolina',    team: 'INSIDE',     territory: 'Puerto Rico',         notes: '' },
+    { agent: 'Brent',       team: 'CALIFORNIA', territory: 'Reno, Nevada',        notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Rhode Island',        notes: '' },
+    { agent: 'Roei',        team: 'CALIFORNIA', territory: 'S California',        notes: '' },
+    { agent: 'Open',        team: 'TX',         territory: 'San Antonio',         notes: '' },
+    { agent: 'Tara',        team: 'EAST',       territory: 'South Carolina',      notes: '' },
+    { agent: 'Carolina',    team: 'INSIDE',     territory: 'South Dakota',        notes: '' },
+    { agent: 'Ivan',        team: 'EAST',       territory: 'South FL',            notes: 'Palm Beach to Miami and Naples' },
+    { agent: 'Shaun',       team: 'CENTRAL',    territory: 'Tennessee',           notes: '' },
+    { agent: 'Emma',        team: 'INSIDE',     territory: 'Utah',                notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Vermont',             notes: '' },
+    { agent: 'Charlotte L', team: 'INSIDE',     territory: 'Virginia',            notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Washington State',    notes: '' },
+    { agent: 'Charlotte L', team: 'INSIDE',     territory: 'West Virginia',       notes: '' },
+    { agent: 'Spencer',     team: 'INSIDE',     territory: 'Wisconsin',           notes: '' },
+    { agent: 'Carolina',    team: 'INSIDE',     territory: 'Wyoming',             notes: '' },
+  ];
+  // ═══════════════════════════════════════════════════════════════
+
+  const TEAM_COLORS = {
+    INSIDE:     { bg: 'rgba(59,130,246,0.12)',  text: '#60a5fa', border: '#3b82f6' },
+    CENTRAL:    { bg: 'rgba(168,85,247,0.12)',  text: '#c084fc', border: '#a855f7' },
+    EAST:       { bg: 'rgba(34,197,94,0.12)',   text: '#4ade80', border: '#22c55e' },
+    CALIFORNIA: { bg: 'rgba(234,179,8,0.12)',   text: '#facc15', border: '#eab308' },
+    TX:         { bg: 'rgba(249,115,22,0.12)',  text: '#fb923c', border: '#f97316' },
+    EILEEN:     { bg: 'rgba(236,72,153,0.12)',  text: '#f472b6', border: '#ec4899' },
+    CANADA:     { bg: 'rgba(6,182,212,0.12)',   text: '#22d3ee', border: '#06b6d4' },
+  };
+
+  let territoryData = JSON.parse(localStorage.getItem('territoryData') || 'null') || DEFAULT_TERRITORY_DATA;
+  let activeTeamFilter = 'ALL';
+  let adminUnlocked = false;
+
+  function getTerritoryData() { return territoryData; }
+
+  function setTeamFilter(team, btn) {
+    activeTeamFilter = team;
+    document.querySelectorAll('.team-filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) {
+      btn.classList.add('active');
+      const c = TEAM_COLORS[team];
+      if (c) { btn.style.background = c.bg; btn.style.borderColor = c.border; btn.style.color = c.text; }
+      else { btn.style.background = ''; btn.style.borderColor = ''; btn.style.color = ''; }
+    }
+    renderTerritoryView();
+  }
+
+  function renderTerritoryView() {
+    const container = document.getElementById('territory-view');
+    if (!container) return;
+
+    const q = (document.getElementById('territory-search')?.value || '').toLowerCase();
+    const data = getTerritoryData();
+
+    let rows = data.filter(r => {
+      if (activeTeamFilter !== 'ALL' && r.team !== activeTeamFilter) return false;
+      if (q) {
+        const hay = [r.agent, r.team, r.territory, r.notes].join(' ').toLowerCase();
+        return q.split(' ').every(w => hay.includes(w));
+      }
+      return true;
+    });
+
+    if (adminUnlocked) {
+      renderEditTable(container, rows, data);
+    } else {
+      renderRepCards(container, rows);
+    }
+  }
+
+  function renderRepCards(container, rows) {
+    // Group by agent
+    const byAgent = {};
+    rows.forEach(r => {
+      if (!byAgent[r.agent]) byAgent[r.agent] = { team: r.team, territories: [] };
+      byAgent[r.agent].territories.push({ territory: r.territory, notes: r.notes });
+    });
+
+    if (Object.keys(byAgent).length === 0) {
+      container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:20px 0">No results found.</div>';
+      return;
+    }
+
+    const cards = Object.entries(byAgent).sort((a, b) => {
+      const teamOrder = ['INSIDE','CENTRAL','EAST','CALIFORNIA','TX','EILEEN','CANADA'];
+      return teamOrder.indexOf(a[1].team) - teamOrder.indexOf(b[1].team) || a[0].localeCompare(b[0]);
+    }).map(([agent, info]) => {
+      const c = TEAM_COLORS[info.team] || { bg: 'rgba(255,255,255,0.06)', text: '#888', border: '#444' };
+      const tags = info.territories.map(t =>
+        `<span class="territory-tag">${t.territory}${t.notes ? `<span class="tag-note">${t.notes}</span>` : ''}</span>`
+      ).join('');
+      return `<div class="rep-card" style="border-left-color:${c.border}">
+        <div class="rep-card-header">
+          <div class="rep-name">${agent}</div>
+          <span class="team-badge" style="background:${c.bg};color:${c.text}">${info.team}</span>
+        </div>
+        <div class="rep-territories">${tags || '<span class="rep-card-empty">No territories</span>'}</div>
+      </div>`;
+    }).join('');
+
+    container.innerHTML = `<div class="rep-grid">${cards}</div>`;
+  }
+
+  function renderEditTable(container, rows, allData) {
+    const notice = `<div class="admin-notice">
+      <div class="admin-notice-text">🔓 Admin mode active — changes auto-save to your browser. Click "Copy code" to publish to all reps.</div>
+      <div class="admin-actions">
+        <button class="admin-action-btn add" onclick="addTerritoryRow()">+ Add Row</button>
+        <button class="admin-action-btn copy" onclick="copyTerritoryCode()">Copy code</button>
+      </div>
+    </div>`;
+
+    const tableRows = rows.map((r, i) => {
+      const globalIdx = allData.indexOf(r);
+      return `<tr>
+        <td><input class="edit-input" value="${escHtml(r.agent)}" onchange="updateTerritoryRow(${globalIdx},'agent',this.value)"></td>
+        <td><input class="edit-input" value="${escHtml(r.team)}" onchange="updateTerritoryRow(${globalIdx},'team',this.value)"></td>
+        <td><input class="edit-input" value="${escHtml(r.territory)}" onchange="updateTerritoryRow(${globalIdx},'territory',this.value)"></td>
+        <td><input class="edit-input" value="${escHtml(r.notes)}" onchange="updateTerritoryRow(${globalIdx},'notes',this.value)" placeholder="Optional notes…"></td>
+        <td><button class="edit-delete-btn" onclick="deleteTerritoryRow(${globalIdx})">✕</button></td>
+      </tr>`;
+    }).join('');
+
+    container.innerHTML = notice + `<div class="edit-table-wrap"><table class="edit-table">
+      <thead><tr><th>Agent</th><th>Team</th><th>Territory</th><th>Notes</th><th></th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table></div>`;
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function updateTerritoryRow(idx, field, value) {
+    territoryData[idx][field] = value;
+    saveTerritoryData();
+  }
+
+  function deleteTerritoryRow(idx) {
+    if (!confirm('Delete this row?')) return;
+    territoryData.splice(idx, 1);
+    saveTerritoryData();
+    renderTerritoryView();
+  }
+
+  function addTerritoryRow() {
+    territoryData.push({ agent: '', team: '', territory: '', notes: '' });
+    saveTerritoryData();
+    renderTerritoryView();
+    // Focus first input of new row
+    setTimeout(() => {
+      const rows = document.querySelectorAll('.edit-table tbody tr');
+      if (rows.length) rows[rows.length - 1].querySelector('input')?.focus();
+    }, 50);
+  }
+
+  function saveTerritoryData() {
+    localStorage.setItem('territoryData', JSON.stringify(territoryData));
+  }
+
+  function copyTerritoryCode() {
+    const lines = territoryData.map(r =>
+      `    { agent: '${r.agent.replace(/'/g,"\\'")}', team: '${r.team.replace(/'/g,"\\'")}', territory: '${r.territory.replace(/'/g,"\\'")}', notes: '${(r.notes||'').replace(/'/g,"\\'")}' },`
+    ).join('\n');
+    const code = `  const DEFAULT_TERRITORY_DATA = [\n${lines}\n  ];`;
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.querySelector('.admin-action-btn.copy');
+      if (btn) { btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = 'Copy code', 2000); }
+    });
+  }
+
+  // ─── Admin PIN ───
+  function handleAdminToggle() {
+    if (adminUnlocked) {
+      adminUnlocked = false;
+      document.getElementById('admin-toggle-btn').classList.remove('active');
+      document.getElementById('admin-toggle-btn').textContent = '🔒 Admin';
+      renderTerritoryView();
+    } else {
+      openPinModal();
+    }
+  }
+
+  function openPinModal() {
+    document.getElementById('pin-modal-overlay').classList.add('open');
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-error').textContent = '';
+    setTimeout(() => document.getElementById('pin-input').focus(), 30);
+  }
+
+  function closePinModal() {
+    document.getElementById('pin-modal-overlay').classList.remove('open');
+  }
+
+  function submitPin() {
+    const val = document.getElementById('pin-input').value;
+    if (val === ADMIN_PIN) {
+      adminUnlocked = true;
+      closePinModal();
+      document.getElementById('admin-toggle-btn').classList.add('active');
+      document.getElementById('admin-toggle-btn').textContent = '🔓 Admin';
+      renderTerritoryView();
+    } else {
+      document.getElementById('pin-error').textContent = 'Incorrect PIN. Try again.';
+      document.getElementById('pin-input').value = '';
+      document.getElementById('pin-input').focus();
+    }
+  }
 
   // Build index and render announcements after DOM is ready
   window.addEventListener('load', () => {
