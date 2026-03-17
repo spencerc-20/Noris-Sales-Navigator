@@ -133,13 +133,16 @@
   }
   .topbar-title {
     font-family: 'Syne', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 800;
     color: #fff;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
   }
   .topbar-date {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
+    margin-top: 1px;
   }
   .topbar-quick {
     display: flex;
@@ -1301,8 +1304,8 @@
       </svg>
     </button>
     <div class="topbar-left">
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
-      <div class="topbar-date" id="topbar-date"></div>
+      <div class="topbar-title">Noris Sales Navigator</div>
+      <div class="topbar-date">Your One Stop Shop for all things Noris Medical Sales</div>
     </div>
     <div class="topbar-right">
       <div class="search-trigger" onclick="openSearch()">
@@ -2691,17 +2694,6 @@
 
     document.getElementById('page-' + id).classList.add('active');
 
-    const titles = {
-      dashboard: 'Dashboard',
-      education: 'Education',
-      'lab-dso': 'Lab & DSO',
-      tools: 'Tools',
-      'sales-training': 'Sales Team Training',
-      'sales-assets': 'Sales Assets',
-      'territories': 'Territory Map'
-    };
-    document.getElementById('topbar-title').textContent = titles[id] || id;
-
     // Find and activate sidebar nav item
     document.querySelectorAll('.nav-item').forEach(n => {
       if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
@@ -2725,10 +2717,6 @@
     
     event.target.classList.add('active');
   }
-
-  // ─── Date ───
-  const now = new Date();
-  document.getElementById('topbar-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   // ─── Search ───
   let searchIndex = [];
