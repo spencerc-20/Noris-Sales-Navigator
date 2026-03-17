@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noris Medical — Sales Navigator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C8102E;
+    --red-dark: #9e0c24;
+    --red-glow: rgba(200,16,46,0.15);
+    --black: #0a0a0a;
+    --dark: #111214;
+    --surface: #181a1e;
+    --surface2: #1f2126;
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.14);
+    --text: #e8e8ea;
+    --text-dim: #8a8d96;
+    --text-muted: #555a65;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --blue: #3b82f6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── SIDEBAR ─── */
+  #sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 220px;
+    height: 100vh;
+    background: var(--dark);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo .brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sidebar-logo .sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .sidebar-logo .red-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    margin-right: 6px;
+    vertical-align: middle;
+    position: relative; top: -1px;
+  }
+
+  nav { padding: 12px 0; flex: 1; }
+
+  .nav-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 14px 20px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item.active {
+    color: #fff;
+    background: var(--red-glow);
+    border-left-color: var(--red);
+  }
+  .nav-item .icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+
+  /* ─── MAIN CONTENT ─── */
+  #main {
+    margin-left: 220px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--dark);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .topbar-date {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .topbar-quick {
+    display: flex;
+    gap: 8px;
+  }
+  .quick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+    border: 1px solid;
+  }
+  .quick-btn.primary {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+  .quick-btn.primary:hover { background: var(--red-dark); }
+  .quick-btn.secondary {
+    background: transparent;
+    border-color: var(--border-bright);
+    color: var(--text-dim);
+  }
+  .quick-btn.secondary:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+  /* ─── PAGE SECTIONS ─── */
+  .page { display: none; padding: 32px; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* ─── CARDS & GRIDS ─── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .card-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    transition: all 0.2s;
+  }
+  .card:hover { border-color: var(--border-bright); background: var(--surface2); }
+
+  .card-link {
+    text-decoration: none;
+    display: block;
+  }
+  .card-link .card:hover { border-color: var(--red); }
+
+  .card-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .card-price {
+    margin-top: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--red);
+  }
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .btn-sm {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: var(--red-dark); }
+  .btn-ghost {
+    background: rgba(255,255,255,0.07);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: #fff; border-color: var(--border-bright); }
+
+  /* ─── SECTION HEADERS ─── */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── EDUCATION TABS ─── */
+  .course-type-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .type-tab {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--surface);
+    transition: all 0.15s;
+  }
+  .type-tab:hover { border-color: var(--border-bright); color: #fff; }
+  .type-tab.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  .course-panel { display: none; }
+  .course-panel.active { display: block; }
+
+  /* ─── COURSE TABLE ─── */
+  .course-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .course-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .course-table td {
+    padding: 14px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  .course-table tr:last-child td { border-bottom: none; }
+  .course-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .course-table th:first-child,
+  .course-table td:first-child { border-radius: 0; }
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-red { background: rgba(200,16,46,0.15); color: #f87171; }
+  .badge-green { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .badge-yellow { background: rgba(245,158,11,0.12); color: #fbbf24; }
+  .badge-blue { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .badge-gray { background: rgba(255,255,255,0.07); color: var(--text-dim); }
+
+  .spots-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* ─── LINK LIST ─── */
+  .link-list { display: flex; flex-direction: column; gap: 3px; }
+  .link-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .link-item:hover { border-color: var(--red); color: #fff; background: var(--surface2); }
+  .link-item .link-icon { font-size: 15px; width: 20px; flex-shrink: 0; }
+  .link-item .link-arrow {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .link-item:hover .link-arrow { color: var(--red); }
+
+  /* ─── TOOLS HERO ─── */
+  .tools-hero {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .tool-hero-card {
+    background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    padding: 22px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--red);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .tool-hero-card:hover { border-color: var(--red); transform: translateY(-2px); }
+  .tool-hero-card:hover::before { opacity: 1; }
+  .tool-hero-emoji { font-size: 28px; margin-bottom: 12px; }
+  .tool-hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .tool-hero-desc { font-size: 12px; color: var(--text-muted); }
+  .tool-hero-badge {
+    position: absolute;
+    top: 14px; right: 14px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--red);
+    color: #fff;
+  }
+
+  /* ─── DSO ─── */
+  .dso-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .dso-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .dso-icon { font-size: 24px; margin-bottom: 10px; }
+  .dso-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .dso-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ─── TRAINING ─── */
+  .training-session {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+  }
+  .training-session:hover { border-color: var(--border-bright); }
+  .session-num {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--red-glow);
+    border: 1px solid rgba(200,16,46,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+  .session-info { flex: 1; }
+  .session-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .session-links { display: flex; gap: 8px; margin-top: 6px; }
+
+  /* ─── SALES ASSETS ─── */
+  .asset-group { margin-bottom: 28px; }
+  .link-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  /* ─── DASHBOARD ─── */
+  .dash-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: #fff; }
+  .stat-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+  .recent-courses {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .recent-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .recent-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .recent-row:last-child { border-bottom: none; }
+  .recent-name { font-weight: 600; color: var(--text); flex: 1; }
+  .recent-date { color: var(--text-muted); flex-shrink: 0; }
+  .recent-loc { color: var(--text-dim); flex-shrink: 0; }
+
+  .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .col-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  @media (max-width: 1100px) {
+    .dash-stats { grid-template-columns: repeat(2, 1fr); }
+    .tools-hero { grid-template-columns: repeat(2, 1fr); }
+    .col-2, .col-3 { grid-template-columns: 1fr; }
+    .link-cols { grid-template-columns: 1fr; }
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  .note-box {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #fbbf24;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .internal-badge {
+    background: rgba(200,16,46,0.12);
+    border: 1px solid rgba(200,16,46,0.3);
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #f87171;
+    padding: 2px 7px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand"><span class="red-dot"></span>Noris Medical</div>
+    <div class="sub">Sales Navigator</div>
+  </div>
+  <nav>
+    <div class="nav-label">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <span class="icon">⚡</span> Dashboard
+    </div>
+
+    <div class="nav-label">Core Sections</div>
+    <div class="nav-item" onclick="showPage('education')">
+      <span class="icon">🎓</span> Education
+    </div>
+    <div class="nav-item" onclick="showPage('lab-dso')">
+      <span class="icon">🏢</span> Lab & DSO
+    </div>
+    <div class="nav-item" onclick="showPage('tools')">
+      <span class="icon">🔧</span> Tools
+    </div>
+    <div class="nav-item" onclick="showPage('sales-training')">
+      <span class="icon">📚</span> Sales Team Training
+    </div>
+    <div class="nav-item" onclick="showPage('sales-assets')">
+      <span class="icon">📁</span> Sales Assets
+    </div>
+  </nav>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+    <div class="topbar-quick">
+      <a href="https://spencerc-20.github.io/Sales-Forecasts/" target="_blank" class="quick-btn secondary">📊 Forecasting</a>
+      <a href="https://spencerc-20.github.io/Noris-Commission-Calculator/" target="_blank" class="quick-btn secondary">💰 Commission</a>
+      <a href="https://usshopadmin.norismedical.com/" target="_blank" class="quick-btn primary">🛒 eShop Admin</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       DASHBOARD
+  ═══════════════════════════════════════════ -->
+  <div id="page-dashboard" class="page active">
+    <div class="page-header">
+      <h1>Good morning, Sales Team 👋</h1>
+      <p>Your command center for Noris Medical sales operations.</p>
+    </div>
+
+    <div class="dash-stats">
+      <div class="stat-card">
+        <div class="stat-label">Upcoming Courses</div>
+        <div class="stat-value">20+</div>
+        <div class="stat-sub">Through Dec 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Local Events</div>
+        <div class="stat-value">3</div>
+        <div class="stat-sub">Study clubs, webinars</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Packages</div>
+        <div class="stat-value">12+</div>
+        <div class="stat-sub">Education + general</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Training Sessions</div>
+        <div class="stat-value">8</div>
+        <div class="stat-sub">Internal ITT sessions</div>
+      </div>
+    </div>
+
+    <div class="col-2">
+      <div>
+        <div class="recent-courses">
+          <div class="recent-header">🔥 Upcoming Courses — Spots Available</div>
+          <div class="recent-row">
+            <div class="recent-name">POWER Cadaver — Coppell, TX</div>
+            <div class="recent-date">May 16–17, 2026</div>
+            <span class="badge badge-green">12 left</span>
+          </div>
+          <div class="recent-row">
+            <div class="recent-name">Zygo Live Patient — São Paulo, Brazil</div>
+            <div class="recent-date">Jun 7–10, 2026</div>
+            <span class="badge badge-yellow">7 left</span>
+          </div>
+          <div class="recent-row">
+            <div class="recent-name">PATZI Cadaver — Aurora, CO</div>
+            <div class="recent-date">Jun 27–28, 2026</div>
+            <span class="badge badge-green">26 left</span>
+          </div>
+          <div class="recent-row">
+            <div class="recent-name">POWER Cadaver — Coppell, TX</div>
+            <div class="recent-date">Jul 11–12, 2026</div>
+            <span class="badge badge-green">26 left</span>
+          </div>
+          <div class="recent-row">
+            <div class="recent-name">One Piece Workshop — Grand Rapids, MI</div>
+            <div class="recent-date">May 21–22, 2026</div>
+            <span class="badge badge-green">20 left</span>
+          </div>
+          <div class="recent-row">
+            <div class="recent-name">Full Arch Cadaver — Palm Beach, FL</div>
+            <div class="recent-date">May 30–31, 2026</div>
+            <span class="badge badge-green">12 left</span>
+          </div>
+          <div class="recent-row">
+            <div class="recent-name">Zygo Live Patient — São Paulo, Brazil</div>
+            <div class="recent-date">Sep 14–17, 2026</div>
+            <span class="badge badge-green">8 left</span>
+          </div>
+          <div class="recent-row">
+            <div class="recent-name">Zygo Live Patient — São Paulo, Brazil</div>
+            <div class="recent-date">Nov 30–Dec 3, 2026</div>
+            <span class="badge badge-green">10 left</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-title">Quick Links</div>
+        <div class="link-list">
+          <a href="https://docs.google.com/spreadsheets/d/1ANlTYeIfRRxQrtFMpELjyg138MPGLKPO729EKEPjb8k/edit?usp=sharing" target="_blank" class="link-item">
+            <span class="link-icon">💲</span> Noris Product Pricing
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://docs.google.com/spreadsheets/d/1Eu-wI5PRGPtrBoG0Tbsf4KgGd_Ir5Xzr/edit?usp=sharing" target="_blank" class="link-item">
+            <span class="link-icon">💲</span> W&H Product Price List
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/100BposXyTCSDxa4PKUEf_R7n3iTjcA-D" target="_blank" class="link-item">
+            <span class="link-icon">📦</span> All Current Packages
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://docs.google.com/presentation/d/18RAHAG_0-eXplM7UuIl8_xDFCA5ZdsPewY2Tjhr3iT4/edit" target="_blank" class="link-item">
+            <span class="link-icon">📋</span> Weekly Focus
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1iXmot6VaWR8Ik-Z7meP_IWmb1J8fitk9?usp=sharing" target="_blank" class="link-item">
+            <span class="link-icon">⭐</span> Current Spiff
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1KHmaxWWiLXCi8QQgODKFFS7miN44wvCx?usp=sharing" target="_blank" class="link-item">
+            <span class="link-icon">💬</span> Objection Handling Guide
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/16zZFKQFei_oBC6X4GzmVJLedhInhCFZF?usp=sharing" target="_blank" class="link-item">
+            <span class="link-icon">📈</span> 2026 Business Closing Guide
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1aC7xyKYY-pNqHnivFTxN81I2e0PzbMk_?usp=sharing" target="_blank" class="link-item">
+            <span class="link-icon">🎯</span> CRM HubSpot Guideline
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="https://norismedical.com/events/upcoming-courses-pdf/" target="_blank" class="link-item">
+            <span class="link-icon">📄</span> Upcoming Courses PDF (share w/ clients)
+            <span class="link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       EDUCATION
+  ═══════════════════════════════════════════ -->
+  <div id="page-education" class="page">
+    <div class="page-header">
+      <h1>Education</h1>
+      <p>Upcoming courses, local events, and education packages for your clients.</p>
+    </div>
+
+    <div class="course-type-tabs">
+      <div class="type-tab active" onclick="showCourseType('cadaver')">🦴 Cadaver Courses</div>
+      <div class="type-tab" onclick="showCourseType('live-patient')">🏥 Live Patient</div>
+      <div class="type-tab" onclick="showCourseType('one-piece')">🔩 One Piece</div>
+      <div class="type-tab" onclick="showCourseType('power')">⚡ POWER Protocol</div>
+      <div class="type-tab" onclick="showCourseType('rockstars')">🎸 Rockstars</div>
+      <div class="type-tab" onclick="showCourseType('webinars')">💻 Webinars & Study Clubs</div>
+      <div class="type-tab" onclick="showCourseType('packages')">📦 Packages</div>
+    </div>
+
+    <!-- CADAVER -->
+    <div id="edu-cadaver" class="course-panel active">
+      <div class="section-title">PATZI Cadaver Courses</div>
+      <div class="table-wrap">
+        <table class="course-table">
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Instructor(s)</th>
+              <th>Spots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>PATZI Cadaver — Coppell, TX</b><br><span style="font-size:11px;color:var(--text-muted)">Interactive 2-Day (14 CE)</span></td>
+              <td>Mar 14–15, 2026</td>
+              <td>Coppell (Dallas), TX</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Alex Nguyen</td>
+              <td><span class="badge badge-red">SOLD OUT</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1lXLKwkry1JFB_KSKpqCns6r0HYJc2gVv?usp=drive_link" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-2-day-cadaver-courseremote-anchorage-full-arch-restoration-for-atrophic-jaws-using-patzi-protocol/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>PATZI Cadaver — Englewood Cliffs, NJ</b><br><span style="font-size:11px;color:var(--text-muted)">Interactive 2-Day (14 CE)</span></td>
+              <td>April 25–26, 2026</td>
+              <td>Englewood Cliffs, NJ</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. David Zelig<br>Dr. Nargiz Schmidt</td>
+              <td><span class="badge badge-red">SOLD OUT</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/14fWEo0Ojonq9AdXR5q5y4EUxKk4_yJVo" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-2-day-cadaver-courseremote-anchorage-full-arch-restoration-using-zygomatic-pterygoid-transnasal-protocol-4/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>PATZI Cadaver — Aurora, CO</b><br><span style="font-size:11px;color:var(--text-muted)">Interactive 2-Day (14 CE)</span></td>
+              <td>Jun 27–28, 2026</td>
+              <td>Aurora, Colorado</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Alex Nguyen</td>
+              <td><span class="badge badge-green">26 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1E7viekog9FL_rS8y6JCn7FpZWfjJSxlY" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-2-day-cadaver-courseremote-anchorage-full-arch-restoration-for-atrophic-jaws-using-patzi-protocolzygomatic-pterygoid-transnasal-tuff-implantsadvanced-full-arch-rehabilitation/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>PATZI Cadaver — Coppell, TX</b><br><span style="font-size:11px;color:var(--text-muted)">Interactive 2-Day (14 CE)</span></td>
+              <td>Aug 22–23, 2026</td>
+              <td>Coppell (Dallas), TX</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Alex Nguyen</td>
+              <td><span class="badge badge-green">26 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1jM-y1Nxqf0v6mn-F1A8r0RoHjLJ2jH8S" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-2-day-cadaver-courseremote-anchorage-full-arch-restoration-for-atrophic-jaws-using-patzi-protocolzygomatic-pterygoid-transnasal-tuff-implantsadvanced-full-arch-rehabilitation-2/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>PATZI Cadaver — Coppell, TX</b><br><span style="font-size:11px;color:var(--text-muted)">Interactive 2-Day (14 CE)</span></td>
+              <td>Dec 12–13, 2026</td>
+              <td>Coppell (Dallas), TX</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Alex Nguyen</td>
+              <td><span class="badge badge-green">26 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1jM-y1Nxqf0v6mn-F1A8r0RoHjLJ2jH8S" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-2-day-cadaver-courseremote-anchorage-full-arch-restoration-for-atrophic-jaws-using-patzi-protocolzygomatic-pterygoid-transnasal-tuff-implantsadvanced-full-arch-rehabilitation-3/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title">Full Arch / Traditional Cadaver</div>
+      <div class="table-wrap">
+        <table class="course-table">
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Instructor(s)</th>
+              <th>Spots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Full Arch with Traditional Implants</b><br><span style="font-size:11px;color:var(--text-muted)">Interactive 2-Day Cadaver</span></td>
+              <td>May 30–31, 2026</td>
+              <td>Palm Beach Gardens, FL</td>
+              <td>Dr. Makepeace Charles</td>
+              <td><span class="badge badge-green">12 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/12mo4y2TsPtgmurNG6dAll_KDjsL6Nvxw?usp=drive_link" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-2-day-cadaver-coursearch-rehabilitation-with-confidence-from-placement-to-profitabilitya-nextgen-business-skills-institute-collaboration-with-noris-medical/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Pathways — Cadaver (Dallas)</b><br><span style="font-size:11px;color:var(--text-muted)">Hands-on Model & Cadaver</span></td>
+              <td>Sept 26–27, 2025</td>
+              <td>Dallas, TX</td>
+              <td>Dr. Dan Holtzclaw</td>
+              <td><span class="badge badge-yellow">10 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1wgT5qvcvf8-KcwIquV8lFTin9mJFaJ9S" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/hands-on-model-and-cadaver-courseremote-anchorage-advanced-cadaver-3/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note-box">⚡ Packages: <a href="https://drive.google.com/drive/folders/108CpLK0BRQGK8J-apekQG0oyYV5qdN_t?usp=drive_link" target="_blank" style="color:#fbbf24;margin-left:6px">PATZI Cadaver Packages →</a></div>
+    </div>
+
+    <!-- LIVE PATIENT -->
+    <div id="edu-live-patient" class="course-panel">
+      <div class="section-title">Live Patient Surgery Courses</div>
+      <div class="table-wrap">
+        <table class="course-table">
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Instructor(s)</th>
+              <th>Spots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Pathways Live Patient</b><br><span style="font-size:11px;color:var(--text-muted)">3-Day Remote Anchorage Advanced Surgery</span></td>
+              <td>Jul 16–18, 2025</td>
+              <td>Gilbert, AZ</td>
+              <td>Dr. Dan Holtzclaw</td>
+              <td><span class="badge badge-yellow">4 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1g1mvkD6bXKFDUYd8Dws9vr5MgEc9F325" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/intensive-3-day-courseremote-anchorage-advanced-surgery-5/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Zygo Live Patient — Rio de Janeiro</b><br><span style="font-size:11px;color:var(--text-muted)">Advanced 4.5 Days (32 CE)</span></td>
+              <td>Jun 7–10, 2026</td>
+              <td>São Paulo, Brazil</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. David Zelig</td>
+              <td><span class="badge badge-yellow">7 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/146oNa8ROleSIMkpZ13BQVzZo78iNPtTX" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/4-5-days-live-patient-surgery-courseadvanced-full-arch-trainingzygomatic-nasal-and-pterygoidtheory-planning-and-live-patient-surgery-training/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Zygo Live Patient — Panama City</b><br><span style="font-size:11px;color:var(--text-muted)">Advanced 5 Days (32 CE)</span></td>
+              <td>May 3–9, 2026</td>
+              <td>Panama City, Panama</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Guido Esquivel</td>
+              <td><span class="badge badge-red">SOLD OUT</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1j46HlVsoRHGf7yfZCKzMiN41KLB5Kh44?usp=drive_link" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/sold-out5-days-live-patient-surgery-courseadvanced-full-arch-trainingzygomatic-nasal-and-pterygoidtheory-planning-surgery-restoration/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Zygo Live Patient — São Paulo</b><br><span style="font-size:11px;color:var(--text-muted)">Advanced 4.5 Days (32 CE)</span></td>
+              <td>Sep 14–17, 2026</td>
+              <td>São Paulo, Brazil</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. David Zelig</td>
+              <td><span class="badge badge-green">8 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1Z8dZvwSwS7rU1X4YX0EWrv1-zFeWOF5N" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/4-5-days-live-patient-surgery-courseadvanced-full-arch-trainingzygomatic-nasal-and-pterygoidtheory-planning-and-live-patient-surgery-training-2/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Zygo Live Patient — São Paulo</b><br><span style="font-size:11px;color:var(--text-muted)">Advanced 4.5 Days (32 CE)</span></td>
+              <td>Nov 30–Dec 3, 2026</td>
+              <td>São Paulo, Brazil</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. David Zelig</td>
+              <td><span class="badge badge-green">10 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1umyiExa8AZnYY92o23GRVH9bLCYLnnlQ" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/4-5-days-live-patient-surgery-courseadvanced-full-arch-trainingzygomatic-nasal-and-pterygoidtheory-planning-and-live-patient-surgery-training-3/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Zygo Live Patient — São Paulo (Mar 2026)</b><br><span style="font-size:11px;color:var(--text-muted)">Advanced 5 Days (32 CE)</span></td>
+              <td>Mar 9–13, 2026</td>
+              <td>São Paulo, Brazil</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. David Zelig</td>
+              <td><span class="badge badge-red">SOLD OUT</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1imOq2argFrB7vpnuzMXIHh46zcIvOd0V" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/5-days-live-patient-surgery-courseadvanced-full-arch-trainingzygomatic-nasal-and-pterygoidtheory-planning-and-live-patient-surgery-training-2/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note-box">📦 Live Patient Packages: <a href="https://drive.google.com/drive/folders/1ko67SvcQRWN7_GLxP35xP1vJ8NVEq7k6" target="_blank" style="color:#fbbf24;margin-left:6px">Zygo/Live Patient Package Folder →</a></div>
+    </div>
+
+    <!-- ONE PIECE -->
+    <div id="edu-one-piece" class="course-panel">
+      <div class="section-title">One Piece Implant Courses</div>
+      <div class="table-wrap">
+        <table class="course-table">
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Instructor(s)</th>
+              <th>Price</th>
+              <th>Spots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>One Piece Implants Workshop</b><br><span style="font-size:11px;color:var(--text-muted)">Hands-on Models Workshop (14 CE)<br>One Piece Implant Institute × Noris Medical</span></td>
+              <td>May 21–22, 2026</td>
+              <td>Grand Rapids, MI</td>
+              <td>Dr. Elias Achey<br>Dr. Jared Van Ittersum</td>
+              <td><span style="color:var(--red);font-weight:700">$5,000</span></td>
+              <td><span class="badge badge-green">20 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1WVTFdP_jnHMTOKoa59njCahzSXu19gKE?usp=drive_link" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/2-day-hands-on-models-workshopthe-next-evolution-in-simplicity-strength-and-digital-designfrom-placement-to-profitabilityone-piece-implant-institute-x-noris-medical-collaboration-2/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section-title">Brochures & Resources</div>
+      <div class="link-list">
+        <a href="https://drive.google.com/file/d/1grvBtLZwjLx3Dd0YJZiSR4qTsy9VWmBM/view?usp=drive_link" target="_blank" class="link-item">
+          <span class="link-icon">📄</span> One Piece Series Brochure
+          <span class="link-arrow">↗</span>
+        </a>
+        <a href="https://drive.google.com/drive/folders/1nHuGpOqwFb3sZajRCYbz1NL2aD46uxjf" target="_blank" class="link-item">
+          <span class="link-icon">📁</span> Conical Connection Folder
+          <span class="link-arrow">↗</span>
+        </a>
+        <a href="https://drive.google.com/drive/folders/1ZX8tI0isnDNPrpnJp-cBqFw0Hz1ssod-?usp=drive_link" target="_blank" class="link-item">
+          <span class="link-icon">📖</span> Conical Connection Manual Protocol
+          <span class="link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- POWER -->
+    <div id="edu-power" class="course-panel">
+      <div class="section-title">POWER Protocol Cadaver Courses</div>
+      <div class="table-wrap">
+        <table class="course-table">
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Instructor(s)</th>
+              <th>Spots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>POWER Cadaver — Coppell, TX</b><br><span style="font-size:11px;color:var(--text-muted)">2-Day Interactive Cadaver (14 CE)</span></td>
+              <td>May 16–17, 2026</td>
+              <td>Coppell (Dallas), TX</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Igor Borisov</td>
+              <td><span class="badge badge-yellow">12 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1urLJ4HeWPKxlBnEXnV2UlRRzuXm9EgIU" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/2-day-interactive-cadaver-courseadvanced-full-arch-precision-and-stability-with-pterygoid-implants-featuring-the-power-protocol/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>POWER Cadaver — Coppell, TX</b><br><span style="font-size:11px;color:var(--text-muted)">2-Day Interactive Cadaver (14 CE)</span></td>
+              <td>Jul 11–12, 2026</td>
+              <td>Coppell (Dallas), TX</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Igor Borisov</td>
+              <td><span class="badge badge-green">26 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1oXPIZL1VQa_cvCCwpDL7MLSHsIiEnURK" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/2-day-interactive-cadaver-courseadvanced-full-arch-precision-and-stability-with-pterygoid-implants-featuring-the-power-protocol-2/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>POWER Cadaver — NJ</b><br><span style="font-size:11px;color:var(--text-muted)">2-Day Interactive Cadaver (14 CE)</span></td>
+              <td>Sep 26–27, 2026</td>
+              <td>New Jersey</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. David Zelig<br>Dr. Igor Borisov</td>
+              <td><span class="badge badge-green">26 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1ircSxzyQXaJv2nuSo91yxNH-eYWix5f7" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/2-day-interactive-cadaver-courseadvanced-full-arch-precision-and-stability-with-pterygoid-implants-featuring-the-power-protocol-4/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>POWER Cadaver — Coppell, TX</b><br><span style="font-size:11px;color:var(--text-muted)">2-Day Interactive Cadaver (14 CE)</span></td>
+              <td>Nov 7–8, 2026</td>
+              <td>Coppell (Dallas), TX</td>
+              <td>Dr. Dan Holtzclaw<br>Dr. Igor Borisov</td>
+              <td><span class="badge badge-green">26 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1zcrSB_UdZhTJ_Qw1qEmCe7L2XNvVBNvq" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/2-day-interactive-cadaver-courseadvanced-full-arch-precision-and-stability-with-pterygoid-implants-featuring-the-power-protocol-3/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note-box">📦 Packages: <a href="https://drive.google.com/drive/folders/1gLoZTWbpPjra7GRe6rm6-_fW-5XukAgB?usp=drive_link" target="_blank" style="color:#fbbf24;margin-left:6px">POWER Cadaver Package Folder →</a></div>
+    </div>
+
+    <!-- ROCKSTARS -->
+    <div id="edu-rockstars" class="course-panel">
+      <div class="section-title">Rockstars — Single Implants & Full Arch Live Patients</div>
+      <div class="table-wrap">
+        <table class="course-table">
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Instructor(s)</th>
+              <th>Spots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Rockstars Ohio — Level 1</b><br><span style="font-size:11px;color:var(--text-muted)">Single & Full Arch Live Patients (24 CE)<br>Blended learning experience</span></td>
+              <td>Apr 17–18 + May 29–30, 2026</td>
+              <td>Concord, OH</td>
+              <td>Dr. Michael Morgan<br>Dr. Michael Fiorrito</td>
+              <td><span class="badge badge-gray">TBD</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1tjcqW9RqcTIVV_eRPdfjiGfc-Uw4p1RI" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-3-modules-live-patient-surgery-courseadvanced-implant-techniquessingle-implants-overdentures-immediate-placementa-blended-learning-experience-with-live-patient-surgery-training-implantsroc/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Rockstars Ohio — Level 2/3</b><br><span style="font-size:11px;color:var(--text-muted)">Single & Full Arch Live Patients (24 CE)</span></td>
+              <td>Oct 9–10 + Nov 6–7, 2026</td>
+              <td>Concord, OH</td>
+              <td>Dr. Michael Morgan<br>Dr. Michael Fiorrito</td>
+              <td><span class="badge badge-gray">TBD</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1tjcqW9RqcTIVV_eRPdfjiGfc-Uw4p1RI" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.com/events/interactive-3-modules-live-patient-surgery-courseadvanced-implant-techniquessingle-implants-overdentures-immediate-placementa-blended-learning-experience-with-live-patient-surgery-training-implantsroc/" target="_blank" class="btn-sm btn-red">Website</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note-box">📦 Packages: <a href="https://drive.google.com/drive/folders/1-8LVLiDWTu7hyUExiZ8OXdTGUFWqPUJP?usp=sharing" target="_blank" style="color:#fbbf24;margin-left:6px">Rockstars Package Folder →</a></div>
+    </div>
+
+    <!-- WEBINARS -->
+    <div id="edu-webinars" class="course-panel">
+      <div class="section-title">Local Events, Webinars & Study Clubs</div>
+      <div class="table-wrap">
+        <table class="course-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Instructor(s)</th>
+              <th>Rep</th>
+              <th>Spots</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Study Club: Unlocking Hidden Implant Opportunities</b></td>
+              <td>Feb 24, 2026</td>
+              <td>Gilbert, AZ</td>
+              <td>Dr. Nate Farley, Dr. Kent Howell</td>
+              <td>Carson</td>
+              <td><span class="badge badge-green">18 Available</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1HdR8lyhhMOz_BN5_LdeS00N3URWDMLU2" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.brushfire.com/fullarchtreamentfrombasictoremoteanchorage-studycl/615661" target="_blank" class="btn-sm btn-red">Register</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Webinar — Dr. J. Robert Friedberg</b><br><span style="font-size:11px;color:var(--text-muted)">Online</span></td>
+              <td>Mar 24, 2026 (6pm Central)</td>
+              <td>Online</td>
+              <td>Dr. J. Robert Friedberg</td>
+              <td>Carolina, Caitlin</td>
+              <td><span class="badge badge-green">Unlimited</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1buRQK0Wi8we9QWiocuWvAELoTLkQ2d3J?usp=drive_link" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://us02web.zoom.us/webinar/register/WN_wJKAZhSSSyGURaclAPr-Qw" target="_blank" class="btn-sm btn-red">Register</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>1-Day Hands-On Models Workshop</b><br><span style="font-size:11px;color:var(--text-muted)">Digital Grammetry Scanning — Full Arch</span></td>
+              <td>Mar 28, 2026 (8am–12pm)</td>
+              <td>Austin, TX</td>
+              <td>Dr. Alexander Nguyen, Scott Lowrey</td>
+              <td>—</td>
+              <td><span class="badge badge-green">FREE</span></td>
+              <td>
+                <a href="https://drive.google.com/drive/folders/1STTgOd6d7ft43u7cgwCydrridvEbil1N" target="_blank" class="btn-sm btn-ghost">Materials</a>
+                <a href="https://norismedical.brushfire.com" target="_blank" class="btn-sm btn-red">Register</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PACKAGES -->
+    <div id="edu-packages" class="course-panel">
+      <div class="section-title">Education Packages</div>
+      <div class="card-grid">
+        <div>
+          <a href="https://usshop.norismedical.com/product/244" target="_blank" class="card-link">
+            <div class="card">
+              <div class="card-title">PATZI Cadaver Package + CSSP</div>
+              <div class="card-price">$8,500</div>
+              <div class="card-actions">
+                <a href="https://drive.google.com/drive/folders/1To_Lm5RG-0-SQvgvA9fr1qBQR-glIGRi?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+                <a href="https://usshop.norismedical.com/product/244" target="_blank" class="btn-sm btn-red">Buy →</a>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">PATZI Cadaver Package — Course Only</div>
+            <div class="card-price">$6,500</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1Zm9WCaebqdnmGEGbpvr_HNkQ1wDu00qc?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/250" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">POWER Cadaver Package + CSSP</div>
+            <div class="card-price">$5,500</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1BjNpc9M_cG3BX0SIL4tePc8D6oAat9xS?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/245" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">POWER Cadaver Package — Course Only</div>
+            <div class="card-price">$4,500</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1zoq0xWR2TvouD92Lqpq7qa-wc5IcK64a?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/249" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Live Patients Package + CSSP</div>
+            <div class="card-price">$29,000</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1s0z2X5bjQEhIAt76P12KCVEgowTdIsVn?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/255" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Live Patients Package — Course Only</div>
+            <div class="card-price">$28,000</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1gOELi7dZ820cVbLGAlWoTIqAodOUaVGU?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/248" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Rockstars Course Packages</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1-8LVLiDWTu7hyUExiZ8OXdTGUFWqPUJP?usp=sharing" target="_blank" class="btn-sm btn-ghost">PDF Folder</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Dr. Makepeace Charles Cadaver Packages</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1LMxeje7PKPHqccYTr__NXMG9iOdebQnI?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF Folder</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">General Sales Packages</div>
+      <div class="card-grid">
+        <div>
+          <div class="card">
+            <div class="card-title">Classic Implants Solutions Package</div>
+            <div class="card-price">$10,000</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1ACMJLak_iay_qjoovWiBfPL1p7hB1EE0?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/235" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">The Power Package</div>
+            <div class="card-price">$20,000</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/103DHcc79wyxpNZAMe9skNbCaqOkq_goG?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/247" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Zygo Pro Full Arch Special Package</div>
+            <div class="card-price">$30,000</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1kARWYSDHWK0xXBNvj29pmthKUrC-7kGu?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF</a>
+              <a href="https://usshop.norismedical.com/product/242" target="_blank" class="btn-sm btn-red">Buy →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Mentorship Packages</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/1qHNhROVNIb_vut346LZj1ef5TFN24icJ?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF Folder</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Digital Packages (EZGuide, EZGoma)</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/10Fdut2vqDFILXmVEtzIMNaErdupVIU6w?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF Folder</a>
+              <a href="https://usshop.norismedical.com/product/?f=category%3A71" target="_blank" class="btn-sm btn-red">Shop →</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">New Clients Packages</div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/drive/folders/14b_ONfVXM3G1MCtVj1iJa6-_fyEs-tWp?usp=drive_link" target="_blank" class="btn-sm btn-ghost">PDF Folder</a>
+              <a href="https://usshop.norismedical.com/product/?f=category%3A72" target="_blank" class="btn-sm btn-red">Shop →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Registration Fees</div>
+      <div class="link-list">
+        <a href="https://shop.norismedical.com/product/course-registration-fee-15k/" target="_blank" class="link-item">
+          <span class="link-icon">💳</span> Advanced Pay — Education Fee | $15K
+          <span class="link-arrow">↗</span>
+        </a>
+        <a href="https://shop.norismedical.com/product/course-registration-fee/" target="_blank" class="link-item">
+          <span class="link-icon">💳</span> Advanced Pay — Education Fee | $5K
+          <span class="link-arrow">↗</span>
+        </a>
+        <a href="https://drive.google.com/drive/folders/1J9HT_TISw7DcU2mczb1Sxtwt-jfK7VDT?usp=drive_link" target="_blank" class="link-item">
+          <span class="link-icon">📁</span> Shop All Education — PDF Folder
+          <span class="link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       LAB & DSO
+  ═══════════════════════════════════════════ -->
+  <div id="page-lab-dso" class="page">
+    <div class="page-header">
+      <h1>Lab & DSO</h1>
+      <p>DSO partnerships, fee schedules, lab bundles, and strategy resources.</p>
+    </div>
+    <div class="dso-grid">
+      <div class="dso-card">
+        <div class="dso-icon">🏢</div>
+        <div class="dso-title">Understanding DSOs, GPOs & Regional Dental Groups</div>
+        <div class="dso-desc">Foundational guide to DSO structures and how to approach them.</div>
+        <div class="card-actions" style="margin-top:10px"><span class="badge badge-gray">Link coming soon</span></div>
+      </div>
+      <a href="https://drive.google.com/open?id=1vekY7jvcvDQIivcJVt2ljUw3H_qGd_wQ" target="_blank" class="card-link">
+      <div class="dso-card">
+        <div class="dso-icon">🔍</div>
+        <div class="dso-title">Prospecting Playbook — DSOs & Decision Makers</div>
+        <div class="dso-desc">Questions to uncover DSOs, regional groups, and key decision-makers.</div>
+        <div class="card-actions" style="margin-top:10px"><span class="btn-sm btn-red">Open →</span></div>
+      </div>
+      </a>
+      <a href="https://drive.google.com/open?id=1B1O1Nksgwu0-WfVwYQffPMf0PjE40vGY" target="_blank" class="card-link">
+      <div class="dso-card">
+        <div class="dso-icon">🌳</div>
+        <div class="dso-title">Dental Office Discovery Decision Tree</div>
+        <div class="dso-desc">Step-by-step guide to navigating dental office discovery conversations.</div>
+        <div class="card-actions" style="margin-top:10px"><span class="btn-sm btn-red">Open →</span></div>
+      </div>
+      </a>
+      <a href="https://drive.google.com/file/d/1cjMSnlgVUaByV2a7Lr-giLBEG_27QKmo/view?usp=sharing" target="_blank" class="card-link">
+      <div class="dso-card">
+        <div class="dso-icon">🤝</div>
+        <div class="dso-title">DSO Partnership Process</div>
+        <div class="dso-desc">Full process documentation for establishing DSO partnerships.</div>
+        <div class="card-actions" style="margin-top:10px"><span class="btn-sm btn-red">Open →</span></div>
+      </div>
+      </a>
+      <a href="https://docs.google.com/presentation/d/16GcgKBP9Gn_wVgDfXT-tlUeZ0_w4XZ7O7IpLHcJa6es/edit" target="_blank" class="card-link">
+      <div class="dso-card">
+        <div class="dso-icon">📊</div>
+        <div class="dso-title">2026 DSO Strategy — Territory Managers Slide Deck</div>
+        <div class="dso-desc">Annual strategy presentation for territory managers.</div>
+        <div class="card-actions" style="margin-top:10px"><span class="btn-sm btn-red">Open →</span></div>
+      </div>
+      </a>
+      <div class="dso-card">
+        <div class="dso-icon">💲</div>
+        <div class="dso-title">DSO Fee Schedules</div>
+        <div class="dso-desc">All current fee schedules for DSO partners.</div>
+        <div class="card-actions" style="margin-top:10px"><span class="badge badge-gray">Link coming soon</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">Lab Resources</div>
+    <div class="link-list">
+      <a href="https://drive.google.com/drive/folders/178FYZXMkqQ2YZ53uXO_OE89J_ZUfKl9-?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📑</span> Lab Partnership Bundle Flyers
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1kcrEUZ5YFJe8qEyfu-BtgIqDrc3fvrR2" target="_blank" class="link-item">
+        <span class="link-icon">🦷</span> Prosthetic Set Package
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1xmJfg6Q9ojEbQvSqmoaJrQ8pmePQ4dN4?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📷</span> 3DISC Package
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1gBuJHY1XatHnEM0E1HfdhNeDmWFMhWv4?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">🔬</span> Saeshin Package
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1bnpdcVfLOS2rXE12s8qP6uCShXTaADRD?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">🤝</span> Collaboration Packages
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1a7jGz8xAocIyXt_W52smk6Bathu5DOX5?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">🧭</span> Navident Package Materials
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TOOLS
+  ═══════════════════════════════════════════ -->
+  <div id="page-tools" class="page">
+    <div class="page-header">
+      <h1>Tools</h1>
+      <p>Everything you need to operate, sell, and support your clients.</p>
+    </div>
+
+    <div class="tools-hero">
+      <a href="https://usshopadmin.norismedical.com/" target="_blank" class="tool-hero-card">
+        <div class="tool-hero-badge">Priority</div>
+        <div class="tool-hero-emoji">🛒</div>
+        <div class="tool-hero-title">eShop Admin Portal</div>
+        <div class="tool-hero-desc">Access and manage the Noris US online store backend.</div>
+      </a>
+      <a href="https://spencerc-20.github.io/Sales-Forecasts/" target="_blank" class="tool-hero-card">
+        <div class="tool-hero-badge">Priority</div>
+        <div class="tool-hero-emoji">📊</div>
+        <div class="tool-hero-title">Weekly Forecasting</div>
+        <div class="tool-hero-desc">Track and submit your weekly sales forecasts.</div>
+      </a>
+      <a href="https://spencerc-20.github.io/Noris-Commission-Calculator/" target="_blank" class="tool-hero-card">
+        <div class="tool-hero-badge">Priority</div>
+        <div class="tool-hero-emoji">💰</div>
+        <div class="tool-hero-title">Commission Calculator</div>
+        <div class="tool-hero-desc">Calculate commissions for any deal or package.</div>
+      </a>
+    </div>
+
+    <div class="section-title">Order & Customer Service</div>
+    <div class="link-cols">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfjyxuambNcx2L0QPYrhlXIEXWWM4TrCkz-xl30FsC5KaQhoQ/viewform" target="_blank" class="link-item">
+        <span class="link-icon">📝</span> Google Order Request Form
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1qw6p1YK8PaO_pySyXpWsYhZDi5E9H0K9?usp=share_link" target="_blank" class="link-item">
+        <span class="link-icon">💳</span> Blank CC Authorization Form
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/document/d/1pdxuCz8X-8Z53g_tMEMHmm05KcIDugeSu4DxaL4qN1Q/edit?tab=t.0" target="_blank" class="link-item">
+        <span class="link-icon">🏥</span> Trial Surgery Template (Print)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1jJ5w_7oxUIHX5oj98a0O_S9H0ybWCvLd?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">⚠️</span> Failed Implant Protocol
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1cYukh7kl30Q0CL1SuXZd03eTGoTm3lOo?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📋</span> Complaints Folder
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1GueOa6WYB_VH4vcg5-WDqOxzpzGKZ3iZ?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">🪪</span> Patient Passport
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1cU-43niIvri4tDRr87wiuZjuZeUDyG5M?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📌</span> Cheat Sheets (Surgery Day / Course)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://forms.gle/aAjEYKVHCSBcPQ8z7" target="_blank" class="link-item">
+        <span class="link-icon">📎</span> Mentorship Intake Forms
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-title">Sales Intelligence</div>
+    <div class="link-cols">
+      <a href="https://drive.google.com/drive/folders/1KHmaxWWiLXCi8QQgODKFFS7miN44wvCx?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">💬</span> Objection Handling Guide
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/16zZFKQFei_oBC6X4GzmVJLedhInhCFZF?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">📈</span> 2026 Business Questioning & Closing Guide
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/document/d/1GaDLSJJgnAMip4W807qjHYKLK88MLcDxqYj7NyXVroI/edit?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">🚀</span> $1M Growth Strategy Playbook
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1tFzX2PYuiRIf5MJAYhbizU5bzpM5IfUw?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">🎙️</span> Talk Tracks
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1SSqcdCDSdeuCmG5GAH_5z5tG466gwEb1?ths=true" target="_blank" class="link-item">
+        <span class="link-icon">🏆</span> Competitive Landscape Analysis <span class="internal-badge">Internal Only</span>
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://npidb.org" target="_blank" class="link-item">
+        <span class="link-icon">🔎</span> NPI Numbers Lookup
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/18e0BuA6i_htRtB4JMIMmVFUoxxB0vw8c" target="_blank" class="link-item">
+        <span class="link-icon">🔧</span> Surgical Kits Diagrams
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/file/d/1euyroMCu_hXx4k3MndgAEK1tkBbn6QbR/view?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">📘</span> EZGoma Guide
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-title">Admin & CRM</div>
+    <div class="link-cols">
+      <a href="https://drive.google.com/drive/folders/1aC7xyKYY-pNqHnivFTxN81I2e0PzbMk_?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">🎯</span> CRM — HubSpot Guideline
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/spreadsheets/d/1fmt7M9Oe9aQPvl5UwLOwtEGcCbLPy47KpOLfj-6RDYc/edit" target="_blank" class="link-item">
+        <span class="link-icon">📅</span> New Events — Marketing Request
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdy6ELOuXsY4cfs3pL2wiIsT-P_jEQnFIDp-McYUuQXlxavhg/viewform" target="_blank" class="link-item">
+        <span class="link-icon">📦</span> Marketing Materials Request (checked 1st & 15th)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://blinq.me" target="_blank" class="link-item">
+        <span class="link-icon">✉️</span> Create Email Signature (Blinq)
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SALES TEAM TRAINING
+  ═══════════════════════════════════════════ -->
+  <div id="page-sales-training" class="page">
+    <div class="page-header">
+      <h1>Sales Team Training</h1>
+      <p>Internal Team Training (ITT) sessions — recordings, materials, and assessments.</p>
+    </div>
+
+    <div class="note-box">
+      🔒 These resources are for internal use only. Each session includes training materials and a knowledge assessment.
+    </div>
+
+    <div class="training-session">
+      <div class="session-num">2</div>
+      <div class="session-info">
+        <div class="session-title">Session 2: Classic and One Piece</div>
+        <div class="session-links">
+          <a href="https://drive.google.com/drive/folders/1gItmI9Dv1qUcayBBfuvznXKIuclB3Kgd" target="_blank" class="btn-sm btn-ghost">📁 Materials</a>
+          <a href="https://cfhwxr7mo2i.typeform.com/to/fNm5kh7T" target="_blank" class="btn-sm btn-red">✏️ Take Test</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="training-session">
+      <div class="session-num">3</div>
+      <div class="session-info">
+        <div class="session-title">Session 3: The Best Solution for Your Practice</div>
+        <div class="session-links">
+          <a href="https://drive.google.com/drive/folders/1GZkSlUy8PqJSQvl0XlbFNIGEDGoz09z7" target="_blank" class="btn-sm btn-ghost">📁 Materials</a>
+          <a href="https://cfhwxr7mo2i.typeform.com/to/aXZZ8295" target="_blank" class="btn-sm btn-red">✏️ Take Test</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="training-session">
+      <div class="session-num">5</div>
+      <div class="session-info">
+        <div class="session-title">Session 5: Digital Dentistry</div>
+        <div class="session-links">
+          <a href="https://drive.google.com/drive/folders/17LKJvhrB4M-KjrLK90ohz95NtbEIDoM_" target="_blank" class="btn-sm btn-ghost">📁 Materials</a>
+          <a href="https://cfhwxr7mo2i.typeform.com/to/JyRVjxNn" target="_blank" class="btn-sm btn-red">✏️ Take Test</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="training-session">
+      <div class="session-num">8</div>
+      <div class="session-info">
+        <div class="session-title">Session 8: Restoration</div>
+        <div class="session-links">
+          <a href="https://drive.google.com/drive/folders/1V5hcBlKK6IJY60Q8U93fElh7jcqClIZA" target="_blank" class="btn-sm btn-ghost">📁 Materials</a>
+          <a href="https://cfhwxr7mo2i.typeform.com/to/iSyGSl4s" target="_blank" class="btn-sm btn-red">✏️ Take Test</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="training-session">
+      <div class="session-num">9</div>
+      <div class="session-info">
+        <div class="session-title">Session 9: Noris Traditional Implant System (Part 1)</div>
+        <div class="session-links">
+          <a href="https://drive.google.com/drive/folders/1Y0OXbvHJb3P2UT_MQlF717xnWTq3e1ih" target="_blank" class="btn-sm btn-ghost">📁 Materials</a>
+          <a href="https://cfhwxr7mo2i.typeform.com/to/SJuSdFGq" target="_blank" class="btn-sm btn-red">✏️ Take Test</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="training-session">
+      <div class="session-num">10</div>
+      <div class="session-info">
+        <div class="session-title">Session 10: Noris Traditional Implant System (Part 2)</div>
+        <div class="session-links">
+          <a href="https://drive.google.com/drive/folders/1ZUa0hrFOed8GOTPSu5-yjijSxkeekxfc" target="_blank" class="btn-sm btn-ghost">📁 Materials</a>
+          <a href="https://cfhwxr7mo2i.typeform.com/to/kfFPJfRW" target="_blank" class="btn-sm btn-red">✏️ Take Test</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Additional Resources</div>
+    <div class="link-list">
+      <a href="https://drive.google.com/drive/folders/1aC7xyKYY-pNqHnivFTxN81I2e0PzbMk_?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">🎯</span> CRM — HubSpot Guidelines
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1KHmaxWWiLXCi8QQgODKFFS7miN44wvCx?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">💬</span> Objection Handling Guide
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/16zZFKQFei_oBC6X4GzmVJLedhInhCFZF?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">📈</span> 2026 Business Closing Guide
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SALES ASSETS
+  ═══════════════════════════════════════════ -->
+  <div id="page-sales-assets" class="page">
+    <div class="page-header">
+      <h1>Sales Assets</h1>
+      <p>Marketing materials, brochures, templates, and digital resources.</p>
+    </div>
+
+    <div class="section-title">Price Lists</div>
+    <div class="link-cols">
+      <a href="https://docs.google.com/spreadsheets/d/1ANlTYeIfRRxQrtFMpELjyg138MPGLKPO729EKEPjb8k/edit?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">💲</span> Noris Product Price List
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/spreadsheets/d/1Eu-wI5PRGPtrBoG0Tbsf4KgGd_Ir5Xzr/edit?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">💲</span> W&H Product Price List
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-title">Catalogs & Brochures</div>
+    <div class="link-cols">
+      <a href="https://norismedical.com/product-catalog/" target="_blank" class="link-item">
+        <span class="link-icon">📖</span> Noris Catalog (Share with clients)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://norismedical.com/academy/" target="_blank" class="link-item">
+        <span class="link-icon">🎓</span> Academy / Clinical Cases (Share with clients)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://norismedical.com/about-us/articles-brochure-download/" target="_blank" class="link-item">
+        <span class="link-icon">📄</span> Articles Brochure (Share w/ clients)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/file/d/18tFYcJk5eWaFOXwXnZbs6TVSLB420OsD/view?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📄</span> Conical Connection Catalog
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1LWwImul5gOO4HnV2C21P9RGdvv5KSQcS?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📑</span> Total Solutions — General Brochure
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1hGONZV-lSmnKfWmvH6RlAPRVjRoMFC_Z?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📑</span> Classic Brochure
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1IXMUyDOGSoxDFobXI1r3wchPWQEN3EN8?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📑</span> Challenge Series Brochure
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1Ix6LBV_oaO7wsre_otbKxYIkAEa4iVV9?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📑</span> Full Arch Brochure
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/file/d/17Z7DP0QGWBhWESYBHTTcnJf5nAk3Q7s9/view?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📑</span> Zygo Patient Brochure
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/file/d/166vgrpBsmpFDJA--fZfNQzJKbSPGP3GK/view?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📑</span> Patient Brochure
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1CxG2Af_Ctgyql-cxvIquesB40Ki2euse?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">🔩</span> Tuff Unicon Product Page
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://www.office.fedex.com/default/flyers.html" target="_blank" class="link-item">
+        <span class="link-icon">🖨️</span> Print Course PDFs (FedEx — printable version only)
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-title">Digital Company Assets (Share with Clients)</div>
+    <div class="link-cols">
+      <a href="https://norismedical.com/" target="_blank" class="link-item">
+        <span class="link-icon">🌐</span> Noris Website
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://usshop.norismedical.com/" target="_blank" class="link-item">
+        <span class="link-icon">🛍️</span> Noris Online Shop
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://www.youtube.com/channel/UC7wUG-w7zj1P2DBRtKlOvqQ" target="_blank" class="link-item">
+        <span class="link-icon">▶️</span> YouTube Channel
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/presentation/d/1Vz65p0T6yDcQCqbp9dJbfzjEfr-imrOe/edit" target="_blank" class="link-item">
+        <span class="link-icon">📊</span> Company Presentation
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-title">Marketing Assets & Templates</div>
+    <div class="link-cols">
+      <a href="https://drive.google.com/drive/folders/1tbsPgmOeTQtW4f2uI7dkHEA9Zcf4zxs4?usp=share_link" target="_blank" class="link-item">
+        <span class="link-icon">🎨</span> Logos
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/presentation/d/1VsMjukvyjeL7kkX6PRVb82UIo0N9V51t/edit" target="_blank" class="link-item">
+        <span class="link-icon">📋</span> PowerPoint Template (White)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/presentation/d/1MFJV--dwg3KeIyh-8CouC0i04E6rh_4P/edit" target="_blank" class="link-item">
+        <span class="link-icon">📋</span> PowerPoint Template (Black)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/presentation/d/10yyzZWPvR5rgyHUA_3PvIuH2n0Zm1LKV/edit" target="_blank" class="link-item">
+        <span class="link-icon">📋</span> PowerPoint Template (Dark)
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/document/d/1vuXSVjoJi69WmItFVrin3oKLARFgt7VPiLHHPfwTO7o/edit" target="_blank" class="link-item">
+        <span class="link-icon">📝</span> Noris Letterhead — Red
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/document/d/1lEQEme_men2GB5RT_zsNHfekFD6xW9KV4HmJIQtXOmQ/edit" target="_blank" class="link-item">
+        <span class="link-icon">📝</span> Noris Letterhead — Black
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-title">Social Media</div>
+    <div class="link-cols">
+      <a href="https://drive.google.com/drive/folders/15Ei7SpoIArujwrDeA1G197DelRaQdRFY?usp=drive_link" target="_blank" class="link-item">
+        <span class="link-icon">📱</span> All Evergreen Content
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/15KAs7LQ7pb3mIE-yULT2O30cMOgaMBcv?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">🎥</span> Evergreen Videos
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1ljwjuVIZICtD-DzKYnuLA9-_iN9wvti3?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">🖼️</span> Evergreen Banners
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1sosbq_1f7ACPMl_izYTGWCLzzrwbMA78?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">👤</span> Cover Photos — LinkedIn
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1dB_cz92YG-KafUaOR2Gtf2jRQPHQJ4CU?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">👤</span> Cover Photos — Facebook
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/spreadsheets/d/1EEVENY9POLO6pz5rkI8pqGfJ6JBTqc0sHBKLni7Pe5E/edit?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">📲</span> Social Media Handles
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/file/d/1UHMDcT9oLhtIh5_gCmyvXBKbhOlX5tLI/view?usp=drivesdk" target="_blank" class="link-item">
+        <span class="link-icon">📏</span> Social Media Guidelines
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://resha.re/" target="_blank" class="link-item">
+        <span class="link-icon">🔄</span> Reshare — Get Instagram Photos/Videos
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://chat.whatsapp.com/F9oUZL4oF8M6NByR9nxlJ3" target="_blank" class="link-item">
+        <span class="link-icon">💬</span> Sharing is Caring — WhatsApp Group
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-title">Current Promotions</div>
+    <div class="link-cols">
+      <a href="https://drive.google.com/drive/folders/1iXmot6VaWR8Ik-Z7meP_IWmb1J8fitk9?usp=sharing" target="_blank" class="link-item">
+        <span class="link-icon">⭐</span> Current Spiff
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://drive.google.com/drive/folders/122PlkES1FL6edpLdXbeOGRDUtYsFjxIR" target="_blank" class="link-item">
+        <span class="link-icon">🏷️</span> This Month Specials
+        <span class="link-arrow">↗</span>
+      </a>
+      <a href="https://docs.google.com/presentation/d/18RAHAG_0-eXplM7UuIl8_xDFCA5ZdsPewY2Tjhr3iT4/edit" target="_blank" class="link-item">
+        <span class="link-icon">📋</span> Weekly Focus
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+  // ─── Navigation ───
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    document.getElementById('page-' + id).classList.add('active');
+    
+    const titles = {
+      dashboard: 'Dashboard',
+      education: 'Education',
+      'lab-dso': 'Lab & DSO',
+      tools: 'Tools',
+      'sales-training': 'Sales Team Training',
+      'sales-assets': 'Sales Assets'
+    };
+    document.getElementById('topbar-title').textContent = titles[id] || id;
+    
+    // Find and activate sidebar nav item
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
+        n.classList.add('active');
+      }
+    });
+  }
+
+  // ─── Education sub-tabs ───
+  function showCourseType(type) {
+    document.querySelectorAll('.course-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    
+    document.getElementById('edu-' + type).classList.add('active');
+    
+    event.target.classList.add('active');
+  }
+
+  // ─── Date ───
+  const now = new Date();
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+</script>
+</body>
+</html>
