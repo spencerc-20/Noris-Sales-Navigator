@@ -131,18 +131,14 @@
     top: 0;
     z-index: 50;
   }
-  .topbar-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.01em;
-    line-height: 1.15;
+  .topbar-logo {
+    height: 32px;
+    width: auto;
+    display: block;
+    object-fit: contain;
   }
-  .topbar-date {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 1px;
+  @media (max-width: 768px) {
+    .topbar-logo { height: 26px; }
   }
   .topbar-quick {
     display: flex;
@@ -1304,8 +1300,7 @@
       </svg>
     </button>
     <div class="topbar-left">
-      <div class="topbar-title">Noris Sales Navigator</div>
-      <div class="topbar-date">Your One Stop Shop for all things Noris Medical Sales</div>
+      <img src="noris-logo.png" alt="Noris Medical" class="topbar-logo">
     </div>
     <div class="topbar-right">
       <div class="search-trigger" onclick="openSearch()">
@@ -1324,8 +1319,8 @@
   ═══════════════════════════════════════════ -->
   <div id="page-dashboard" class="page active">
     <div class="page-header">
-      <h1>Good morning, Sales Team 👋</h1>
-      <p>Your command center for Noris Medical sales operations.</p>
+      <h1>Noris Sales Navigator</h1>
+      <p>Your "One Stop Shop" for all things Noris Medical Sales</p>
     </div>
 
     <div id="announcements-widget" class="announcements-widget">
