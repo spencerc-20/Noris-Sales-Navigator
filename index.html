@@ -131,14 +131,23 @@
     top: 0;
     z-index: 50;
   }
+  .topbar-logo-wrap {
+    background: #fff;
+    border-radius: 7px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
   .topbar-logo {
-    height: 32px;
+    height: 28px;
     width: auto;
     display: block;
     object-fit: contain;
   }
   @media (max-width: 768px) {
-    .topbar-logo { height: 26px; }
+    .topbar-logo { height: 22px; }
+    .topbar-logo-wrap { padding: 4px 8px; border-radius: 6px; }
   }
   .topbar-quick {
     display: flex;
@@ -1300,7 +1309,9 @@
       </svg>
     </button>
     <div class="topbar-left">
-      <img src="noris-logo.png" alt="Noris Medical" class="topbar-logo">
+      <div class="topbar-logo-wrap">
+        <img src="noris-logo.png" alt="Noris Medical" class="topbar-logo">
+      </div>
     </div>
     <div class="topbar-right">
       <div class="search-trigger" onclick="openSearch()">
