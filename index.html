@@ -2740,42 +2740,71 @@
     if (e.key === 'Escape') closeSidebar();
   });
 
-  // ─── Seat Availability (Google Sheets) ───
-  const SEAT_SHEET_ID = '1-v7XZzRyT_64c538b0yFVlSiQ0nGJdbQQp-N0ebS9DI';
-  const SEAT_SHEET_TAB = 'Seat Availability';
-
+  // ─── Seat Availability — pulls directly from "Upcoming Courses" tab ───
+  // Matches each sheet row to an HTML course row via the shared Google Drive folder URL.
+  // To update a count: just edit column I ("Spots Available") in your sheet. No HTML changes needed.
   async function fetchSeatAvailability() {
-    const url = `https://docs.google.com/spreadsheets/d/${SEAT_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SEAT_SHEET_TAB)}`;
+    const SHEET_ID = '1-v7XZzRyT_64c538b0yFVlSiQ0nGJdbQQp-N0ebS9DI';
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Upcoming%20Courses`;
     try {
       const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
-      // Strip the gviz wrapper: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
       const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
-      json.table.rows.forEach(row => {
-        const courseId = row.c[0]?.v;
-        const raw      = row.c[1]?.v;    // spots value: number or text
-        if (!courseId) return;
-        const cell = document.querySelector(`[data-seat-id="${courseId}"]`);
-        if (!cell) return;
+      const rows = json.table.rows;
 
-        let cls, label;
-        const val = String(raw ?? '').trim();
-        const num = parseFloat(val);
+      // Detect column indices from gviz labels first, then scan row values as fallback
+      // Defaults from screenshot: F=5 (Link for Materials), I=8 (Spots Available)
+      let materialsCol = 5, spotsCol = 8;
+      (json.table.cols || []).forEach((col, i) => {
+        const lbl = (col.label || '').toLowerCase();
+        if (lbl.includes('material')) materialsCol = i;
+        if (lbl.includes('spots available')) spotsCol = i;
+      });
+      rows.forEach(row => {
+        (row.c || []).forEach((cell, i) => {
+          const v = String(cell?.v || '').toLowerCase().trim();
+          if (v === 'link for materials') materialsCol = i;
+          if (v === 'spots available') spotsCol = i;
+        });
+      });
 
-        if (val === '' || val === '-') return; // leave badge as-is
-        if (isNaN(num)) {
-          // Text values: SOLD OUT, TBD, Unlimited, FREE, etc.
-          if (val.toUpperCase() === 'SOLD OUT' || val === '0') { cls = 'badge badge-red';    label = 'SOLD OUT'; }
-          else if (val.toUpperCase() === 'TBD')                 { cls = 'badge badge-gray';   label = 'TBD'; }
-          else if (val.toUpperCase() === 'UNLIMITED')           { cls = 'badge badge-green';  label = 'Unlimited'; }
-          else if (val.toUpperCase() === 'FREE')                { cls = 'badge badge-green';  label = 'FREE'; }
-          else                                                  { cls = 'badge badge-gray';   label = val; }
-        } else {
-          if (num <= 0)     { cls = 'badge badge-red';    label = 'SOLD OUT'; }
-          else if (num <= 5){ cls = 'badge badge-yellow'; label = `${num} left`; }
-          else              { cls = 'badge badge-green';  label = `${num} spots`; }
-        }
-        cell.innerHTML = `<span class="${cls}">${label}</span>`;
+      rows.forEach(row => {
+        if (!row.c) return;
+        const materialsVal = row.c[materialsCol]?.v;
+        const spotsVal     = row.c[spotsCol]?.v;
+        if (!materialsVal) return;
+
+        // Extract the Drive folder ID — this is the unique key linking sheet ↔ HTML
+        const folderMatch = String(materialsVal).match(/\/folders\/([a-zA-Z0-9_-]+)/);
+        if (!folderMatch) return;
+        const folderId = folderMatch[1];
+
+        // Find the Materials button(s) in the HTML with this folder ID
+        document.querySelectorAll(`a[href*="${folderId}"].btn-sm`).forEach(link => {
+          const tr = link.closest('tr');
+          if (!tr) return;
+          const badge = tr.querySelector('.badge');
+          if (!badge) return;
+          if (spotsVal == null || String(spotsVal).trim() === '') return;
+
+          const raw = String(spotsVal).trim();
+          const num = parseFloat(raw);
+          let cls, label;
+
+          if (raw.toUpperCase() === 'SOLD OUT' || num === 0) { cls = 'badge badge-red';    label = 'SOLD OUT'; }
+          else if (raw.toUpperCase() === 'TBD')              { cls = 'badge badge-gray';   label = 'TBD'; }
+          else if (raw.toUpperCase() === 'UNLIMITED')        { cls = 'badge badge-green';  label = 'Unlimited'; }
+          else if (raw.toUpperCase() === 'FREE')             { cls = 'badge badge-green';  label = 'FREE'; }
+          else if (!isNaN(num)) {
+            if (num <= 0)      { cls = 'badge badge-red';    label = 'SOLD OUT'; }
+            else if (num <= 5) { cls = 'badge badge-yellow'; label = `${num} left`; }
+            else               { cls = 'badge badge-green';  label = `${num} spots`; }
+          } else { cls = 'badge badge-gray'; label = raw; }
+
+          badge.className = cls;
+          badge.textContent = label;
+        });
       });
     } catch (e) {
       console.warn('Seat availability fetch failed:', e);
