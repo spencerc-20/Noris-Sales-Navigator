@@ -716,6 +716,117 @@
     padding: 1px 5px;
   }
 
+  /* ─── ANNOUNCEMENTS ─── */
+  .announcements-widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .ann-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ann-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .ann-new-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 6px var(--red);
+    flex-shrink: 0;
+  }
+  .ann-entry {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 14px;
+  }
+  .ann-entry:last-child { border-bottom: none; }
+  .ann-date-col {
+    flex-shrink: 0;
+    width: 80px;
+    padding-top: 2px;
+  }
+  .ann-date {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .ann-body { flex: 1; }
+  .ann-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .ann-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .ann-new-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--red);
+    color: #fff;
+    border-radius: 20px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .ann-pinned-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(245,158,11,0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 20px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .ann-body-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+  .ann-body-text a { color: var(--blue); text-decoration: none; }
+  .ann-body-text a:hover { text-decoration: underline; }
+  .ann-empty {
+    padding: 20px 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* sidebar new-items badge */
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 6px;
+    line-height: 1;
+  }
+
   /* scrollbar */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -763,8 +874,8 @@
   </div>
   <nav>
     <div class="nav-label">Main</div>
-    <div class="nav-item active" onclick="showPage('dashboard')">
-      <span class="icon">⚡</span> Dashboard
+    <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <span class="icon">⚡</span> Dashboard <span id="nav-ann-badge" class="nav-badge" style="display:none"></span>
     </div>
 
     <div class="nav-label">Core Sections</div>
@@ -814,6 +925,16 @@
     <div class="page-header">
       <h1>Good morning, Sales Team 👋</h1>
       <p>Your command center for Noris Medical sales operations.</p>
+    </div>
+
+    <div id="announcements-widget" class="announcements-widget">
+      <div class="ann-header">
+        <div class="ann-header-left">
+          <span id="ann-dot" class="ann-new-dot" style="display:none"></span>
+          📣 Announcements & Updates
+        </div>
+      </div>
+      <div id="ann-list"></div>
     </div>
 
     <div class="dash-stats">
@@ -2035,6 +2156,75 @@
 </div>
 
 <script>
+  // ═══════════════════════════════════════════════════════════════
+  //  ANNOUNCEMENTS — edit this array to post updates to the team
+  //  Fields:
+  //    date    : 'YYYY-MM-DD'   (required)
+  //    title   : string         (required)
+  //    body    : string         (required, HTML allowed for links)
+  //    pinned  : true/false     (optional — keeps it at the top)
+  // ═══════════════════════════════════════════════════════════════
+  const ANNOUNCEMENTS = [
+    {
+      date: '2026-03-17',
+      title: 'Sales Navigator is live!',
+      body: 'Welcome to your new command center. Bookmark this page — it\'s your one-stop hub for courses, tools, assets, and team resources. More features coming soon.',
+      pinned: true
+    }
+    // Add new announcements above this line. Most recent date shows first.
+  ];
+  // ═══════════════════════════════════════════════════════════════
+
+  function renderAnnouncements() {
+    const list = document.getElementById('ann-list');
+    const dot = document.getElementById('ann-dot');
+    const badge = document.getElementById('nav-ann-badge');
+    if (!list) return;
+
+    if (ANNOUNCEMENTS.length === 0) {
+      list.innerHTML = '<div class="ann-empty">No announcements yet.</div>';
+      return;
+    }
+
+    const today = new Date();
+    // Sort: pinned first, then by date descending
+    const sorted = [...ANNOUNCEMENTS].sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return new Date(b.date) - new Date(a.date);
+    });
+
+    const newCount = ANNOUNCEMENTS.filter(a => {
+      const days = (today - new Date(a.date)) / 86400000;
+      return days <= 7;
+    }).length;
+
+    if (newCount > 0) {
+      dot.style.display = 'block';
+      badge.style.display = 'inline';
+      badge.textContent = newCount;
+    }
+
+    list.innerHTML = sorted.map(a => {
+      const days = (today - new Date(a.date)) / 86400000;
+      const isNew = days <= 7;
+      const dateObj = new Date(a.date + 'T12:00:00');
+      const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const newBadge = isNew ? '<span class="ann-new-badge">New</span>' : '';
+      const pinnedBadge = a.pinned ? '<span class="ann-pinned-badge">📌 Pinned</span>' : '';
+      return `<div class="ann-entry">
+        <div class="ann-date-col"><div class="ann-date">${dateStr}</div></div>
+        <div class="ann-body">
+          <div class="ann-title-row">
+            <div class="ann-title">${a.title}</div>
+            ${newBadge}${pinnedBadge}
+          </div>
+          <div class="ann-body-text">${a.body}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
   // ─── Navigation ───
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2334,8 +2524,11 @@
     }
   });
 
-  // Build index after DOM is ready
-  window.addEventListener('load', buildSearchIndex);
+  // Build index and render announcements after DOM is ready
+  window.addEventListener('load', () => {
+    buildSearchIndex();
+    renderAnnouncements();
+  });
 </script>
 </body>
 </html>
