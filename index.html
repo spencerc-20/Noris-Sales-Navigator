@@ -2741,8 +2741,10 @@
   });
 
   // ─── Seat Availability — pulls directly from "Upcoming Courses" tab ───
-  // Matches each sheet row to an HTML course row via the shared Google Drive folder URL.
-  // To update a count: just edit column I ("Spots Available") in your sheet. No HTML changes needed.
+  // Matches sheet rows to HTML elements using normalised start-date keys (YYYY-MM-DD).
+  // This is format-agnostic: "June 7th-10th 2026" and "Jun 7–10, 2026" both → "2026-06-07".
+  // Course names, folder links, and display labels are irrelevant — date is the only key.
+  // To update a count: edit col I ("Spots Available") in your sheet. Nothing else needed.
   async function fetchSeatAvailability() {
     const SHEET_ID = '1-v7XZzRyT_64c538b0yFVlSiQ0nGJdbQQp-N0ebS9DI';
     const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Upcoming%20Courses`;
@@ -2753,76 +2755,82 @@
       const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
       const rows = json.table.rows;
 
-      // Detect column indices from gviz labels first, then scan row values as fallback
-      // Defaults from screenshot: F=5 (Link for Materials), I=8 (Spots Available)
-      let materialsCol = 5, spotsCol = 8;
+      // ── Column detection (defaults: C=2 date, I=8 spots) ──────────────────
+      let dateCol = 2, spotsCol = 8;
       (json.table.cols || []).forEach((col, i) => {
         const lbl = (col.label || '').toLowerCase();
-        if (lbl.includes('material')) materialsCol = i;
+        if (lbl.includes('date'))            dateCol  = i;
         if (lbl.includes('spots available')) spotsCol = i;
       });
       rows.forEach(row => {
         (row.c || []).forEach((cell, i) => {
           const v = String(cell?.v || '').toLowerCase().trim();
-          if (v === 'link for materials') materialsCol = i;
-          if (v === 'spots available') spotsCol = i;
+          if (v === 'date/s' || v === 'date') dateCol  = i;
+          if (v === 'spots available')         spotsCol = i;
         });
       });
 
-      // Helper: convert a raw sheet value into a badge {cls, label}
-      function spotsToBadge(spotsVal) {
-        if (spotsVal == null || String(spotsVal).trim() === '') return null;
-        const raw = String(spotsVal).trim();
-        const num = parseFloat(raw);
-        if (raw.toUpperCase() === 'SOLD OUT' || num === 0) return { cls: 'badge badge-red',    label: 'SOLD OUT' };
-        if (raw.toUpperCase() === 'TBD')                  return { cls: 'badge badge-gray',   label: 'TBD' };
-        if (raw.toUpperCase() === 'UNLIMITED')            return { cls: 'badge badge-green',  label: 'Unlimited' };
-        if (raw.toUpperCase() === 'FREE')                 return { cls: 'badge badge-green',  label: 'FREE' };
-        if (!isNaN(num)) {
-          if (num <= 0)      return { cls: 'badge badge-red',    label: 'SOLD OUT' };
-          if (num <= 5)      return { cls: 'badge badge-yellow', label: `${num} left` };
-          return               { cls: 'badge badge-green',  label: `${num} spots` };
-        }
-        return { cls: 'badge badge-gray', label: raw };
+      // ── Helpers ───────────────────────────────────────────────────────────
+      const MO = { jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12 };
+
+      // Normalise any date string → "YYYY-MM-DD" of the START date.
+      // Handles: "June 7th-10th 2026", "Jun 7–10, 2026", "Apr 17–18 + May 29–30, 2026",
+      //          "Mar 24, 2026 (6pm Central)", "Sept 26–27, 2025", etc.
+      function toKey(raw) {
+        if (!raw) return null;
+        const s = String(raw).replace(/\([^)]*\)/g, '').split('+')[0].trim();
+        const yr = s.match(/\b(20\d{2})\b/)?.[1];
+        if (!yr) return null;
+        const mM = s.match(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b/i);
+        if (!mM) return null;
+        const mo = MO[mM[1].toLowerCase().slice(0, 3)];
+        if (!mo) return null;
+        const dy = s.slice(s.indexOf(mM[0]) + mM[0].length).match(/\b(\d{1,2})\b/)?.[1];
+        if (!dy) return null;
+        return `${yr}-${String(mo).padStart(2,'0')}-${String(+dy).padStart(2,'0')}`;
       }
 
-      // Pass 1 — update every matching course-table row badge via Drive folder ID
+      // Convert a raw "Spots Available" value into a {cls, label} badge descriptor.
+      function toBadge(val) {
+        if (val == null || String(val).trim() === '') return null;
+        const raw = String(val).trim(), num = parseFloat(raw);
+        if (raw.toUpperCase() === 'SOLD OUT' || num === 0) return { cls:'badge badge-red',    label:'SOLD OUT'  };
+        if (raw.toUpperCase() === 'TBD')                  return { cls:'badge badge-gray',   label:'TBD'       };
+        if (raw.toUpperCase() === 'UNLIMITED')            return { cls:'badge badge-green',  label:'Unlimited' };
+        if (raw.toUpperCase() === 'FREE')                 return { cls:'badge badge-green',  label:'FREE'      };
+        if (!isNaN(num)) {
+          if (num <= 0) return { cls:'badge badge-red',    label:'SOLD OUT'    };
+          if (num <= 5) return { cls:'badge badge-yellow', label:`${num} left` };
+          return               { cls:'badge badge-green',  label:`${num} spots`};
+        }
+        return { cls:'badge badge-gray', label:raw };
+      }
+
+      // ── Build dateKey → badge map from the sheet ──────────────────────────
+      const map = {};
       rows.forEach(row => {
         if (!row.c) return;
-        const materialsVal = row.c[materialsCol]?.v;
-        const spotsVal     = row.c[spotsCol]?.v;
-        if (!materialsVal) return;
-
-        const folderMatch = String(materialsVal).match(/\/folders\/([a-zA-Z0-9_-]+)/);
-        if (!folderMatch) return;
-        const folderId = folderMatch[1];
-        const b = spotsToBadge(spotsVal);
-        if (!b) return;
-
-        document.querySelectorAll(`a[href*="${folderId}"].btn-sm`).forEach(link => {
-          const tr = link.closest('tr');
-          if (!tr) return;
-          const badge = tr.querySelector('.badge');
-          if (!badge) return;
-          badge.className  = b.cls;
-          badge.textContent = b.label;
-        });
+        const key = toKey(row.c[dateCol]?.v);
+        const b   = toBadge(row.c[spotsCol]?.v);
+        if (key && b) map[key] = b;
       });
 
-      // Pass 2 — sync dashboard .recent-row badges from the now-updated course table
-      // Match is done by exact date-text comparison (both use identical strings).
-      document.querySelectorAll('.course-table tbody tr').forEach(tr => {
-        const dateCell = tr.querySelector('td:nth-child(2)');
-        const srcBadge = tr.querySelector('.badge');
-        if (!dateCell || !srcBadge) return;
-        const dateText = dateCell.textContent.trim();
+      // ── Apply to every badge-carrying element on the page ─────────────────
+      function stamp(dateText, badgeEl) {
+        const b = map[toKey(dateText)];
+        if (!b || !badgeEl) return;
+        badgeEl.className   = b.cls;
+        badgeEl.textContent = b.label;
+      }
 
-        document.querySelectorAll('.recent-row').forEach(dashRow => {
-          const rd = dashRow.querySelector('.recent-date');
-          if (!rd || rd.textContent.trim() !== dateText) return;
-          const db = dashRow.querySelector('.badge');
-          if (db) { db.className = srcBadge.className; db.textContent = srcBadge.textContent; }
-        });
+      // Education tab — course table rows (date in td:nth-child(2))
+      document.querySelectorAll('.course-table tbody tr').forEach(tr => {
+        stamp(tr.querySelector('td:nth-child(2)')?.textContent, tr.querySelector('.badge'));
+      });
+
+      // Dashboard — upcoming-courses rows (date in .recent-date)
+      document.querySelectorAll('.recent-row').forEach(row => {
+        stamp(row.querySelector('.recent-date')?.textContent, row.querySelector('.badge'));
       });
 
     } catch (e) {
