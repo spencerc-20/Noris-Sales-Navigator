@@ -2812,6 +2812,69 @@
   }
   fetchSeatAvailability();
 
+  // ─── Auto-remove past courses ───
+  // Reads the date cell of every course row, parses the END date,
+  // and removes rows whose end date is before today.
+  // Also hides any section-title + table-wrap that becomes empty.
+  function prunePastCourses() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const MONTH = {
+      jan:0, feb:1, mar:2, apr:3, may:4, jun:5,
+      jul:6, aug:7, sep:8, oct:9, nov:10, dec:11
+    };
+
+    function parseEndDate(raw) {
+      // Strip time-of-day parentheticals e.g. "(6pm Central)"
+      const cleaned = raw.replace(/\([^)]*\)/g, '').trim();
+      // Multi-part courses like "Apr 17–18 + May 29–30, 2026" — use the LAST segment
+      const seg = cleaned.split('+').pop().trim();
+
+      const yearM = seg.match(/\b(20\d{2})\b/);
+      if (!yearM) return null;
+      const year = +yearM[1];
+
+      // Find every month token and keep track of its position
+      const re = /\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b/gi;
+      const months = [];
+      let m;
+      while ((m = re.exec(seg)) !== null)
+        months.push({ mo: MONTH[m[1].toLowerCase().slice(0,3)], pos: m.index });
+      if (!months.length) return null;
+
+      // The last month mentioned owns the end day
+      const last = months[months.length - 1];
+      const tail = seg.slice(last.pos);
+      const days = (tail.match(/\b(\d{1,2})\b/g) || []).map(Number).filter(n => n >= 1 && n <= 31);
+      if (!days.length) return null;
+
+      return new Date(year, last.mo, days[days.length - 1]);
+    }
+
+    document.querySelectorAll('.course-table tbody tr').forEach(row => {
+      const cell = row.querySelector('td:nth-child(2)');
+      if (!cell) return;
+      const end = parseEndDate(cell.textContent);
+      if (end && end < today) row.remove();
+    });
+
+    // Hide section-title + table-wrap pairs where the table is now empty
+    document.querySelectorAll('.course-table').forEach(tbl => {
+      if (tbl.querySelectorAll('tbody tr').length > 0) return;
+      const wrap = tbl.closest('.table-wrap');
+      if (!wrap) return;
+      wrap.style.display = 'none';
+      // Walk backwards to find the nearest preceding .section-title
+      let sib = wrap.previousElementSibling;
+      while (sib) {
+        if (sib.classList.contains('section-title')) { sib.style.display = 'none'; break; }
+        sib = sib.previousElementSibling;
+      }
+    });
+  }
+  prunePastCourses();
+
   // ─── Navigation ───
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
