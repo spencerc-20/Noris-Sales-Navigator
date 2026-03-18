@@ -659,6 +659,53 @@
   .topbar-left { flex: 1; min-width: 0; }
   .topbar-right { display: flex; align-items: center; gap: var(--sp-3); flex-shrink: 0; }
 
+  /* ─── MOBILE QUICK-ACCESS DOCK ─── */
+  #mobile-quick-dock {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 90;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: var(--sp-2) var(--sp-3) calc(var(--sp-2) + env(safe-area-inset-bottom));
+    gap: var(--sp-2);
+  }
+  #mobile-quick-dock a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: var(--sp-2) var(--sp-1);
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+  #mobile-quick-dock a .dock-emoji {
+    font-size: 18px;
+    line-height: 1;
+  }
+  #mobile-quick-dock a:hover,
+  #mobile-quick-dock a:active { background: var(--surface2); border-color: var(--border-bright); color: var(--text); }
+  #mobile-quick-dock a.dock-primary {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+  #mobile-quick-dock a.dock-primary:hover,
+  #mobile-quick-dock a.dock-primary:active { background: var(--red-dark); border-color: var(--red-dark); }
+
   /* ─── BREAKPOINTS ─── */
   @media (max-width: 1100px) {
     .tools-hero { grid-template-columns: repeat(2, 1fr); }
@@ -676,7 +723,7 @@
       transform: translateX(0);
       box-shadow: 8px 0 40px oklch(4% 0.005 20 / 0.6);
     }
-    #main { margin-left: 0; }
+    #main { margin-left: 0; padding-bottom: 80px; }
     .hamburger-btn { display: flex; align-items: center; justify-content: center; }
     .topbar { padding: 13px 20px; }
     .topbar-date { display: none; }
@@ -685,6 +732,7 @@
     .search-kbd { display: none; }
     .search-trigger { padding: 8px 10px; gap: 0; }
     .dash-stats { grid-template-columns: repeat(2, 1fr); }
+    #mobile-quick-dock { display: flex; }
   }
 
   @media (max-width: 768px) {
@@ -3444,5 +3492,18 @@
     renderAnnouncements();
   });
 </script>
+
+<!-- MOBILE QUICK-ACCESS DOCK (hidden on desktop via CSS) -->
+<div id="mobile-quick-dock">
+  <a href="https://spencerc-20.github.io/Sales-Forecasts/" target="_blank">
+    <span class="dock-emoji">📊</span>Forecasting
+  </a>
+  <a href="https://spencerc-20.github.io/Noris-Commission-Calculator/" target="_blank">
+    <span class="dock-emoji">💰</span>Commission
+  </a>
+  <a href="https://usshopadmin.norismedical.com/" target="_blank" class="dock-primary">
+    <span class="dock-emoji">🛒</span>eShop Admin
+  </a>
+</div>
 </body>
 </html>
