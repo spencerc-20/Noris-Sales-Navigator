@@ -1047,13 +1047,18 @@
   .rep-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-top-width: 2px;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: var(--sp-4);
-    transition: background var(--dur-fast) var(--ease-out),
-                border-color var(--dur-fast) var(--ease-out);
+    box-shadow: 0 1px 4px oklch(0% 0 0 / 0.07);
+    transition: filter var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
   }
-  .rep-card:hover { background: var(--surface2); }
+  .rep-card:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px oklch(0% 0 0 / 0.12);
+  }
   .rep-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .rep-name {
     font-family: 'Syne', sans-serif;
@@ -3240,14 +3245,14 @@
   // ═══════════════════════════════════════════════════════════════
 
   const TEAM_COLORS = {
-    INSIDE:     { bg: '#dbeafe', text: '#1e40af', border: '#3b82f6' },
-    CENTRAL:    { bg: '#ede9fe', text: '#5b21b6', border: '#8b5cf6' },
-    EAST:       { bg: '#dcfce7', text: '#166534', border: '#22c55e' },
-    CALIFORNIA: { bg: '#fef9c3', text: '#854d0e', border: '#eab308' },
-    TX:         { bg: '#ffedd5', text: '#9a3412', border: '#f97316' },
-    EILEEN:     { bg: '#fce7f3', text: '#9d174d', border: '#ec4899' },
-    CANADA:     { bg: '#cffafe', text: '#164e63', border: '#06b6d4' },
-    DAN:        { bg: '#fef3c7', text: '#78350f', border: '#f59e0b' },
+    INSIDE:     { bg: '#bfdbfe', text: '#1e3a8a', border: '#93c5fd', badge: '#1d4ed8' },
+    CENTRAL:    { bg: '#ddd6fe', text: '#4c1d95', border: '#c4b5fd', badge: '#6d28d9' },
+    EAST:       { bg: '#bbf7d0', text: '#14532d', border: '#86efac', badge: '#15803d' },
+    CALIFORNIA: { bg: '#fde68a', text: '#78350f', border: '#fcd34d', badge: '#b45309' },
+    TX:         { bg: '#fed7aa', text: '#7c2d12', border: '#fdba74', badge: '#c2410c' },
+    EILEEN:     { bg: '#fbcfe8', text: '#831843', border: '#f9a8d4', badge: '#be185d' },
+    CANADA:     { bg: '#a5f3fc', text: '#164e63', border: '#67e8f9', badge: '#0e7490' },
+    DAN:        { bg: '#fde68a', text: '#713f12', border: '#fcd34d', badge: '#92400e' },
   };
 
   let territoryData = JSON.parse(localStorage.getItem('territoryData_v2') || 'null') || DEFAULT_TERRITORY_DATA;
@@ -3308,14 +3313,17 @@
       const teamOrder = ['INSIDE','CENTRAL','EAST','CALIFORNIA','TX','EILEEN','CANADA'];
       return teamOrder.indexOf(a[1].team) - teamOrder.indexOf(b[1].team) || a[0].localeCompare(b[0]);
     }).map(([agent, info]) => {
-      const c = TEAM_COLORS[info.team] || { bg: 'rgba(255,255,255,0.06)', text: '#888', border: '#444' };
+      const c = TEAM_COLORS[info.team] || { bg: '#f1f5f9', text: '#334155', border: '#cbd5e1', badge: '#475569' };
       const tags = info.territories.map(t =>
-        `<span class="territory-tag">${t.territory}${t.notes ? `<span class="tag-note">${t.notes}</span>` : ''}</span>`
+        `<span class="territory-tag" style="background:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.85);color:${c.text}">${t.territory}${t.notes ? `<span class="tag-note" style="color:${c.text};opacity:0.65">${t.notes}</span>` : ''}</span>`
       ).join('');
-      return `<div class="rep-card" style="border-top-color:${c.border}">
+      const badge = info.team !== 'DAN'
+        ? `<span class="team-badge" style="background:${c.badge};color:#fff">${info.team}</span>`
+        : '';
+      return `<div class="rep-card" style="background:${c.bg};border-color:${c.border}">
         <div class="rep-card-header">
-          <div class="rep-name">${agent}</div>
-          <span class="team-badge" style="background:${c.bg};color:${c.text}">${info.team}</span>
+          <div class="rep-name" style="color:${c.text}">${agent}</div>
+          ${badge}
         </div>
         <div class="rep-territories">${tags || '<span class="rep-card-empty">No territories</span>'}</div>
       </div>`;
