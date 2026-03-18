@@ -12,33 +12,33 @@
      Principles: OKLCH colour · 4pt spacing · ease-out-expo motion
   ═══════════════════════════════════════════════════════════════ */
   :root {
-    /* ── Colour: perceptually-uniform OKLCH, neutrals tinted warm-red ── */
-    --bg:            oklch(9% 0.008 20);
-    --dark:          oklch(11% 0.009 20);
-    --surface:       oklch(14% 0.01 20);
-    --surface2:      oklch(18% 0.011 20);
-    --surface3:      oklch(22% 0.012 20);
+    /* ── Colour: OKLCH light theme, neutrals tinted warm-red ── */
+    --bg:            oklch(97.5% 0.004 20);
+    --dark:          oklch(96% 0.005 20);
+    --surface:       oklch(100% 0 0);
+    --surface2:      oklch(95.5% 0.005 20);
+    --surface3:      oklch(92% 0.006 20);
 
-    /* Borders — explicit values, no alpha transparency */
-    --border:        oklch(21% 0.01 20);
-    --border-bright: oklch(30% 0.013 20);
+    /* Borders */
+    --border:        oklch(89% 0.007 20);
+    --border-bright: oklch(79% 0.009 20);
 
     /* Text */
-    --text:          oklch(91% 0.005 20);
-    --text-dim:      oklch(65% 0.008 20);
-    --text-muted:    oklch(44% 0.008 20);
+    --text:          oklch(13% 0.01 20);
+    --text-dim:      oklch(40% 0.01 20);
+    --text-muted:    oklch(58% 0.008 20);
 
     /* Brand red */
     --red:           oklch(48% 0.22 22);
     --red-dark:      oklch(38% 0.2  22);
-    --red-glow:      oklch(15% 0.038 22);
-    --red-border:    oklch(27% 0.09  22);
-    --red-text:      oklch(74% 0.165 22);
+    --red-glow:      oklch(96% 0.028 22);
+    --red-border:    oklch(85% 0.07  22);
+    --red-text:      oklch(44% 0.22  22);
 
     /* Semantic */
-    --green:         oklch(70% 0.19 142);
-    --yellow:        oklch(76% 0.17  76);
-    --blue:          oklch(63% 0.18 248);
+    --green:         oklch(35% 0.18 142);
+    --yellow:        oklch(42% 0.16  76);
+    --blue:          oklch(45% 0.18 248);
 
     /* Motion tokens */
     --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
@@ -178,7 +178,8 @@
     z-index: 50;
   }
   .topbar-logo-wrap {
-    background: oklch(97% 0.003 20);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 5px 10px;
     display: inline-flex;
@@ -421,9 +422,9 @@
     letter-spacing: 0.01em;
   }
   .badge-red   { background: var(--red-glow);              color: var(--red-text); }
-  .badge-green { background: oklch(19% 0.04 142);          color: oklch(70% 0.19 142); }
-  .badge-yellow{ background: oklch(20% 0.045 76);          color: oklch(76% 0.17 76); }
-  .badge-blue  { background: oklch(18% 0.04 248);          color: oklch(72% 0.16 248); }
+  .badge-green { background: oklch(93% 0.06 142);          color: oklch(30% 0.18 142); }
+  .badge-yellow{ background: oklch(93% 0.06 76);           color: oklch(35% 0.16 76); }
+  .badge-blue  { background: oklch(93% 0.06 248);          color: oklch(35% 0.18 248); }
   .badge-gray  { background: var(--surface2);              color: var(--text-dim); }
 
   .spots-badge {
@@ -854,8 +855,8 @@
     text-overflow: ellipsis;
   }
   .search-result-title mark {
-    background: oklch(32% 0.1 22);
-    color: var(--red-text);
+    background: oklch(91% 0.07 22);
+    color: var(--red);
     border-radius: 2px;
     font-style: normal;
   }
@@ -950,15 +951,15 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    background: oklch(20% 0.04 76);
-    color: oklch(76% 0.17 76);
-    border: 1px solid oklch(32% 0.08 76);
+    background: oklch(93% 0.06 76);
+    color: oklch(35% 0.16 76);
+    border: 1px solid oklch(80% 0.1 76);
     border-radius: 3px;
     padding: 2px 7px;
     flex-shrink: 0;
   }
   .ann-body-text { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-  .ann-body-text a { color: oklch(63% 0.18 248); text-decoration: none; }
+  .ann-body-text a { color: oklch(42% 0.18 248); text-decoration: none; }
   .ann-body-text a:hover { text-decoration: underline; }
   .ann-empty { padding: 20px 18px; font-size: 13px; color: var(--text-muted); text-align: center; }
 
@@ -1238,12 +1239,12 @@
   .divider { height: 1px; background: var(--border); margin: 20px 0; }
 
   .note-box {
-    background: oklch(18% 0.04 76);
-    border: 1px solid oklch(32% 0.08 76);
+    background: oklch(95% 0.05 76);
+    border: 1px solid oklch(82% 0.1 76);
     border-radius: 7px;
     padding: var(--sp-3) var(--sp-4);
     font-size: 12px;
-    color: oklch(76% 0.17 76);
+    color: oklch(38% 0.16 76);
     margin-bottom: var(--sp-4);
     display: flex;
     align-items: flex-start;
