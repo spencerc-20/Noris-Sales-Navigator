@@ -2930,6 +2930,9 @@
 
     // Scroll to top on page switch
     window.scrollTo({ top: 0, behavior: 'instant' });
+
+    // Render territory map when switching to that page
+    if (id === 'territories') renderTerritoryView();
   }
 
   // ─── Education sub-tabs ───
@@ -3212,7 +3215,7 @@
   const DEFAULT_TERRITORY_DATA = [
     { agent: 'Emma',        team: 'INSIDE',     territory: 'Alabama',             notes: '' },
     { agent: 'Emma',        team: 'INSIDE',     territory: 'Alaska',              notes: '' },
-    { agent: 'Carson',      team: 'INSIDE',     territory: 'Arizona',             notes: '' },
+    { agent: 'Dan',         team: 'DAN',        territory: 'Arizona',             notes: '' },
     { agent: 'Carson',      team: 'INSIDE',     territory: 'Arkansas',            notes: '' },
     { agent: 'Open',        team: 'TX',         territory: 'Austin, TX',          notes: '' },
     { agent: 'Emma',        team: 'INSIDE',     territory: 'Colorado',            notes: '' },
@@ -3247,7 +3250,7 @@
     { agent: 'Eileen',      team: 'EILEEN',     territory: 'New York',            notes: '' },
     { agent: 'Tara',        team: 'EAST',       territory: 'North Carolina',      notes: '' },
     { agent: 'Constance',   team: 'INSIDE',     territory: 'North Dakota',        notes: '' },
-    { agent: 'Brent',       team: 'CALIFORNIA', territory: 'NE California',       notes: '' },
+    { agent: 'Brent',       team: 'CALIFORNIA', territory: 'North East California', notes: '' },
     { agent: 'Carolina',    team: 'INSIDE',     territory: 'North FL',            notes: 'North of Palm Beach to Tallahassee' },
     { agent: 'Nick (RM)',   team: 'CENTRAL',    territory: 'Ohio',                notes: 'Morgan, Fioritto and Marshall – Charlotte' },
     { agent: 'Carson',      team: 'INSIDE',     territory: 'Oklahoma',            notes: '' },
@@ -3255,7 +3258,6 @@
     { agent: 'Constance',   team: 'INSIDE',     territory: 'Oregon',              notes: '' },
     { agent: 'Malcom',      team: 'EILEEN',     territory: 'Pennsylvania',        notes: '' },
     { agent: 'Carolina',    team: 'INSIDE',     territory: 'Puerto Rico',         notes: '' },
-    { agent: 'Brent',       team: 'CALIFORNIA', territory: 'Reno, Nevada',        notes: '' },
     { agent: 'Spencer',     team: 'INSIDE',     territory: 'Rhode Island',        notes: '' },
     { agent: 'Roei',        team: 'CALIFORNIA', territory: 'S California',        notes: '' },
     { agent: 'Open',        team: 'TX',         territory: 'San Antonio',         notes: '' },
@@ -3281,9 +3283,10 @@
     TX:         { bg: 'rgba(249,115,22,0.12)',  text: '#fb923c', border: '#f97316' },
     EILEEN:     { bg: 'rgba(236,72,153,0.12)',  text: '#f472b6', border: '#ec4899' },
     CANADA:     { bg: 'rgba(6,182,212,0.12)',   text: '#22d3ee', border: '#06b6d4' },
+    DAN:        { bg: 'rgba(251,191,36,0.12)',  text: '#fbbf24', border: '#f59e0b' },
   };
 
-  let territoryData = JSON.parse(localStorage.getItem('territoryData') || 'null') || DEFAULT_TERRITORY_DATA;
+  let territoryData = JSON.parse(localStorage.getItem('territoryData_v2') || 'null') || DEFAULT_TERRITORY_DATA;
   let activeTeamFilter = 'ALL';
   let adminUnlocked = false;
 
@@ -3411,7 +3414,7 @@
   }
 
   function saveTerritoryData() {
-    localStorage.setItem('territoryData', JSON.stringify(territoryData));
+    localStorage.setItem('territoryData_v2', JSON.stringify(territoryData));
   }
 
   function copyTerritoryCode() {
