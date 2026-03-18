@@ -2769,43 +2769,62 @@
         });
       });
 
+      // Helper: convert a raw sheet value into a badge {cls, label}
+      function spotsToBadge(spotsVal) {
+        if (spotsVal == null || String(spotsVal).trim() === '') return null;
+        const raw = String(spotsVal).trim();
+        const num = parseFloat(raw);
+        if (raw.toUpperCase() === 'SOLD OUT' || num === 0) return { cls: 'badge badge-red',    label: 'SOLD OUT' };
+        if (raw.toUpperCase() === 'TBD')                  return { cls: 'badge badge-gray',   label: 'TBD' };
+        if (raw.toUpperCase() === 'UNLIMITED')            return { cls: 'badge badge-green',  label: 'Unlimited' };
+        if (raw.toUpperCase() === 'FREE')                 return { cls: 'badge badge-green',  label: 'FREE' };
+        if (!isNaN(num)) {
+          if (num <= 0)      return { cls: 'badge badge-red',    label: 'SOLD OUT' };
+          if (num <= 5)      return { cls: 'badge badge-yellow', label: `${num} left` };
+          return               { cls: 'badge badge-green',  label: `${num} spots` };
+        }
+        return { cls: 'badge badge-gray', label: raw };
+      }
+
+      // Pass 1 — update every matching course-table row badge via Drive folder ID
       rows.forEach(row => {
         if (!row.c) return;
         const materialsVal = row.c[materialsCol]?.v;
         const spotsVal     = row.c[spotsCol]?.v;
         if (!materialsVal) return;
 
-        // Extract the Drive folder ID — this is the unique key linking sheet ↔ HTML
         const folderMatch = String(materialsVal).match(/\/folders\/([a-zA-Z0-9_-]+)/);
         if (!folderMatch) return;
         const folderId = folderMatch[1];
+        const b = spotsToBadge(spotsVal);
+        if (!b) return;
 
-        // Find the Materials button(s) in the HTML with this folder ID
         document.querySelectorAll(`a[href*="${folderId}"].btn-sm`).forEach(link => {
           const tr = link.closest('tr');
           if (!tr) return;
           const badge = tr.querySelector('.badge');
           if (!badge) return;
-          if (spotsVal == null || String(spotsVal).trim() === '') return;
-
-          const raw = String(spotsVal).trim();
-          const num = parseFloat(raw);
-          let cls, label;
-
-          if (raw.toUpperCase() === 'SOLD OUT' || num === 0) { cls = 'badge badge-red';    label = 'SOLD OUT'; }
-          else if (raw.toUpperCase() === 'TBD')              { cls = 'badge badge-gray';   label = 'TBD'; }
-          else if (raw.toUpperCase() === 'UNLIMITED')        { cls = 'badge badge-green';  label = 'Unlimited'; }
-          else if (raw.toUpperCase() === 'FREE')             { cls = 'badge badge-green';  label = 'FREE'; }
-          else if (!isNaN(num)) {
-            if (num <= 0)      { cls = 'badge badge-red';    label = 'SOLD OUT'; }
-            else if (num <= 5) { cls = 'badge badge-yellow'; label = `${num} left`; }
-            else               { cls = 'badge badge-green';  label = `${num} spots`; }
-          } else { cls = 'badge badge-gray'; label = raw; }
-
-          badge.className = cls;
-          badge.textContent = label;
+          badge.className  = b.cls;
+          badge.textContent = b.label;
         });
       });
+
+      // Pass 2 — sync dashboard .recent-row badges from the now-updated course table
+      // Match is done by exact date-text comparison (both use identical strings).
+      document.querySelectorAll('.course-table tbody tr').forEach(tr => {
+        const dateCell = tr.querySelector('td:nth-child(2)');
+        const srcBadge = tr.querySelector('.badge');
+        if (!dateCell || !srcBadge) return;
+        const dateText = dateCell.textContent.trim();
+
+        document.querySelectorAll('.recent-row').forEach(dashRow => {
+          const rd = dashRow.querySelector('.recent-date');
+          if (!rd || rd.textContent.trim() !== dateText) return;
+          const db = dashRow.querySelector('.badge');
+          if (db) { db.className = srcBadge.className; db.textContent = srcBadge.textContent; }
+        });
+      });
+
     } catch (e) {
       console.warn('Seat availability fetch failed:', e);
     }
