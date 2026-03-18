@@ -2741,10 +2741,12 @@
   });
 
   // ─── Seat Availability — pulls directly from "Upcoming Courses" tab ───
-  // Matches sheet rows to HTML elements using normalised start-date keys (YYYY-MM-DD).
-  // This is format-agnostic: "June 7th-10th 2026" and "Jun 7–10, 2026" both → "2026-06-07".
-  // Course names, folder links, and display labels are irrelevant — date is the only key.
-  // To update a count: edit col I ("Spots Available") in your sheet. Nothing else needed.
+  // Matches sheet rows → HTML badges using normalised start-date keys (YYYY-MM-DD).
+  // "June 7th-10th 2026" and "Jun 7–10, 2026" both normalise to "2026-06-07".
+  //
+  // Root-cause fix: gviz silently drops col I when its formula evaluates to text
+  // (e.g. "SOLD OUT"). We fall back to col L (Total Spots) − col M (Registered)
+  // which are always plain numbers and always come through correctly.
   async function fetchSeatAvailability() {
     const SHEET_ID = '1-v7XZzRyT_64c538b0yFVlSiQ0nGJdbQQp-N0ebS9DI';
     const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Upcoming%20Courses`;
@@ -2755,55 +2757,58 @@
       const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
       const rows = json.table.rows;
 
-      // ── Column detection (defaults: C=2 date, I=8 spots) ──────────────────
-      let dateCol = 2, spotsCol = 8;
+      // ── Column detection ───────────────────────────────────────────────────
+      // Confirmed structure from live sheet: C=2 date, I=8 spots, L=11 total, M=12 registered
+      let dateCol=2, spotsCol=8, totalCol=11, regCol=12;
       (json.table.cols || []).forEach((col, i) => {
         const lbl = (col.label || '').toLowerCase();
         if (lbl.includes('date'))            dateCol  = i;
         if (lbl.includes('spots available')) spotsCol = i;
-      });
-      rows.forEach(row => {
-        (row.c || []).forEach((cell, i) => {
-          const v = String(cell?.v || '').toLowerCase().trim();
-          if (v === 'date/s' || v === 'date') dateCol  = i;
-          if (v === 'spots available')         spotsCol = i;
-        });
+        if (lbl.includes('total spots'))     totalCol = i;
+        if (lbl.includes('registered'))      regCol   = i;
       });
 
       // ── Helpers ───────────────────────────────────────────────────────────
       const MO = { jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12 };
 
-      // Normalise any date string → "YYYY-MM-DD" of the START date.
-      // Handles: "June 7th-10th 2026", "Jun 7–10, 2026", "Apr 17–18 + May 29–30, 2026",
-      //          "Mar 24, 2026 (6pm Central)", "Sept 26–27, 2025", etc.
+      // Normalise any date string → "YYYY-MM-DD" start date.
+      // Falls back to current year when the sheet row omits it (e.g. "May 21st-22nd").
       function toKey(raw) {
         if (!raw) return null;
-        const s = String(raw).replace(/\([^)]*\)/g, '').split('+')[0].trim();
-        const yr = s.match(/\b(20\d{2})\b/)?.[1];
-        if (!yr) return null;
+        const s  = String(raw).replace(/\([^)]*\)/g, '').split('+')[0].trim();
+        const yr = s.match(/\b(20\d{2})\b/)?.[1] ?? String(new Date().getFullYear());
         const mM = s.match(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b/i);
         if (!mM) return null;
         const mo = MO[mM[1].toLowerCase().slice(0, 3)];
         if (!mo) return null;
-        const dy = s.slice(s.indexOf(mM[0]) + mM[0].length).match(/\b(\d{1,2})\b/)?.[1];
+        const dy = s.slice(s.indexOf(mM[0]) + mM[0].length).match(/\b(\d{1,2})(?:st|nd|rd|th)?(?!\d)/i)?.[1];
         if (!dy) return null;
         return `${yr}-${String(mo).padStart(2,'0')}-${String(+dy).padStart(2,'0')}`;
       }
 
-      // Convert a raw "Spots Available" value into a {cls, label} badge descriptor.
-      function toBadge(val) {
-        if (val == null || String(val).trim() === '') return null;
-        const raw = String(val).trim(), num = parseFloat(raw);
-        if (raw.toUpperCase() === 'SOLD OUT' || num === 0) return { cls:'badge badge-red',    label:'SOLD OUT'  };
-        if (raw.toUpperCase() === 'TBD')                  return { cls:'badge badge-gray',   label:'TBD'       };
-        if (raw.toUpperCase() === 'UNLIMITED')            return { cls:'badge badge-green',  label:'Unlimited' };
-        if (raw.toUpperCase() === 'FREE')                 return { cls:'badge badge-green',  label:'FREE'      };
-        if (!isNaN(num)) {
-          if (num <= 0) return { cls:'badge badge-red',    label:'SOLD OUT'    };
-          if (num <= 5) return { cls:'badge badge-yellow', label:`${num} left` };
-          return               { cls:'badge badge-green',  label:`${num} spots`};
+      // Build a badge descriptor from col I (Spots Available).
+      // When col I is null — which happens whenever its formula returns text like "SOLD OUT"
+      // because gviz cannot serialise formula-generated strings — derive the count from
+      // col L (Total Spots) minus col M (Registered), both of which are always numbers.
+      function getSeatBadge(spots, total, registered) {
+        if (spots != null) {
+          const raw = String(spots).trim(), num = parseFloat(raw);
+          if (raw.toUpperCase() === 'SOLD OUT') return { cls:'badge badge-red',    label:'SOLD OUT'   };
+          if (raw.toUpperCase() === 'TBD')      return { cls:'badge badge-gray',   label:'TBD'        };
+          if (raw.toUpperCase() === 'UNLIMITED') return { cls:'badge badge-green', label:'Unlimited'  };
+          if (raw.toUpperCase() === 'FREE')     return { cls:'badge badge-green',  label:'FREE'       };
+          if (!isNaN(num)) {
+            if (num <= 0) return { cls:'badge badge-red',    label:'SOLD OUT'    };
+            if (num <= 5) return { cls:'badge badge-yellow', label:`${num} left` };
+            return               { cls:'badge badge-green',  label:`${num} spots`};
+          }
         }
-        return { cls:'badge badge-gray', label:raw };
+        // col I was null — fall back to Total − Registered
+        if (total == null) return null;          // no data at all, leave badge untouched
+        const rem = (total || 0) - (registered || 0);
+        if (rem <= 0) return { cls:'badge badge-red',    label:'SOLD OUT'    };
+        if (rem <= 5) return { cls:'badge badge-yellow', label:`${rem} left` };
+        return               { cls:'badge badge-green',  label:`${rem} spots`};
       }
 
       // ── Build dateKey → badge map from the sheet ──────────────────────────
@@ -2811,7 +2816,11 @@
       rows.forEach(row => {
         if (!row.c) return;
         const key = toKey(row.c[dateCol]?.v);
-        const b   = toBadge(row.c[spotsCol]?.v);
+        const b   = getSeatBadge(
+          row.c[spotsCol]?.v ?? null,
+          row.c[totalCol]?.v ?? null,
+          row.c[regCol]?.v   ?? null
+        );
         if (key && b) map[key] = b;
       });
 
