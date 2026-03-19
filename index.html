@@ -1468,6 +1468,84 @@
     background: var(--ces-border);
   }
 
+  /* ── SECTION HEADERS (rows 1, 9) ── */
+  .ces-section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 36px 0 18px;
+    animation: cesFadeUp 320ms var(--ease-out) both;
+  }
+  .ces-section-header:first-child { padding-top: 8px; }
+  .ces-section-accent {
+    width: 3px;
+    height: 26px;
+    background: var(--ces-gold);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .ces-section-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--ces-gold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .ces-section-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--ces-border-hi), transparent);
+  }
+
+  /* ── SUBSECTION HEADERS (rows 2, 6, 10, 13, 18) ── */
+  .ces-subsection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 15px 20px;
+    margin-bottom: 6px;
+    background: var(--ces-surface2);
+    border: 1px solid var(--ces-border-hi);
+    border-left: 3px solid var(--ces-gold-dim);
+    border-radius: 6px;
+    animation: cesRowIn 320ms var(--ease-out) both;
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
+  }
+  .ces-subsection:hover { background: #2a1e1e; border-color: var(--ces-gold-dim); }
+  .ces-subsection-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ces-gold);
+    letter-spacing: 0.02em;
+    flex: 1;
+  }
+  .ces-subsection-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid var(--ces-gold-dim);
+    color: var(--ces-gold-dim);
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
+  }
+  .ces-subsection-btn:hover { background: var(--ces-gold-dim); color: #1a1a1a; }
+  .ces-subsection-btn:focus-visible { outline: 2px solid var(--ces-gold); outline-offset: 2px; }
+
   /* Loading / error states */
   .ces-loading, .ces-error {
     padding: 40px 0;
@@ -3826,10 +3904,31 @@
 
       if (!assets.length) throw new Error('No rows');
 
-      container.innerHTML = assets.map((a, i) => `
-        <div class="ces-row${a.link ? '' : ' ces-no-link'}"
-             style="animation-delay:${i * 55}ms">
-          <span class="ces-row-num">${String(i + 1).padStart(2, '0')}</span>
+      const SECTION_HEADERS    = new Set([0, 8]);
+      const SUBSECTION_HEADERS = new Set([1, 5, 9, 12, 17]);
+      let resourceNum = 0;
+
+      container.innerHTML = assets.map((a, i) => {
+        const delay = `animation-delay:${i * 40}ms`;
+
+        if (SECTION_HEADERS.has(i)) {
+          return `<div class="ces-section-header" style="${delay}">
+            <div class="ces-section-accent"></div>
+            <div class="ces-section-name">${a.name}</div>
+            <div class="ces-section-rule"></div>
+          </div>`;
+        }
+
+        if (SUBSECTION_HEADERS.has(i)) {
+          return `<div class="ces-subsection" style="${delay}">
+            <div class="ces-subsection-name">${a.name}</div>
+            ${a.link ? `<a href="${a.link}" target="_blank" rel="noopener noreferrer" class="ces-subsection-btn">Open →</a>` : ''}
+          </div>`;
+        }
+
+        resourceNum++;
+        return `<div class="ces-row${a.link ? '' : ' ces-no-link'}" style="${delay}">
+          <span class="ces-row-num">${String(resourceNum).padStart(2, '0')}</span>
           <div class="ces-row-content">
             <div class="ces-row-name">${a.name}</div>
             ${a.desc ? `<div class="ces-row-desc">${a.desc}</div>` : ''}
@@ -3837,8 +3936,8 @@
           ${a.link
             ? `<a href="${a.link}" target="_blank" rel="noopener noreferrer" class="ces-row-btn">Open <span aria-hidden="true">→</span></a>`
             : `<span class="ces-row-btn" style="opacity:0.3;cursor:default;pointer-events:none">—</span>`}
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
 
     } catch (err) {
       cesLoaded = false; // allow retry
