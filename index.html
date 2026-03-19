@@ -1315,6 +1315,262 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
+
+  /* ══════════════════════════════════════════════════════════════
+     CES — CARE ELEVATION SQUAD  |  Dark tactical section
+  ══════════════════════════════════════════════════════════════ */
+  :root {
+    --ces-bg:         #0e0b0b;
+    --ces-surface:    #191212;
+    --ces-surface2:   #221818;
+    --ces-border:     #332222;
+    --ces-border-hi:  #4d3333;
+    --ces-gold:       #d4a847;
+    --ces-gold-dim:   #8c6e30;
+    --ces-text:       #e8dcc8;
+    --ces-text-dim:   #9a8878;
+    --ces-text-muted: #5c4e44;
+    --ces-red:        #C8102E;
+    --ces-red-dark:   #9e0c24;
+  }
+
+  /* Page container — overrides the default light padding */
+  #page-ces.page {
+    padding: 0;
+    background: var(--ces-bg);
+    min-height: calc(100vh - 57px); /* below topbar */
+  }
+
+  /* ── HERO ── */
+  .ces-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 56px var(--sp-8) 48px;
+    text-align: center;
+    border-bottom: 1px solid var(--ces-border);
+    overflow: hidden;
+  }
+  .ces-hero::before {
+    /* Subtle radial vignette */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 100% at 50% 0%, #2a0a0a 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ces-hero::after {
+    /* Horizontal scan-lines texture */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      oklch(0% 0 0 / 0.04) 3px,
+      oklch(0% 0 0 / 0.04) 4px
+    );
+    pointer-events: none;
+  }
+
+  .ces-logo-img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 28px;
+    filter: drop-shadow(0 4px 24px oklch(0% 0 0 / 0.6));
+    animation: cesLogoIn 500ms var(--ease-out) both;
+  }
+  @keyframes cesLogoIn {
+    from { opacity: 0; transform: scale(0.88); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .ces-hero-text {
+    position: relative;
+    z-index: 1;
+    animation: cesFadeUp 400ms 100ms var(--ease-out) both;
+  }
+  @keyframes cesFadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ces-eyebrow {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ces-red);
+    margin-bottom: 10px;
+  }
+  .ces-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 800;
+    color: var(--ces-gold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .ces-title-abbr {
+    display: block;
+    font-size: clamp(44px, 7vw, 64px);
+    letter-spacing: 0.12em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .ces-rule {
+    width: 64px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ces-gold), transparent);
+    margin: 0 auto 18px;
+  }
+  .ces-tagline {
+    font-size: 13.5px;
+    color: var(--ces-text-dim);
+    letter-spacing: 0.03em;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── BODY / MANIFEST ── */
+  .ces-body {
+    padding: 40px var(--sp-8) 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .ces-manifest-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ces-text-muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ces-manifest-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ces-border);
+  }
+
+  /* Loading / error states */
+  .ces-loading, .ces-error {
+    padding: 40px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ces-text-muted);
+    letter-spacing: 0.05em;
+  }
+  .ces-loading::before {
+    content: '◌ ';
+    animation: cesPulse 1.2s infinite;
+  }
+  @keyframes cesPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+  /* ── RESOURCE ROWS ── */
+  @keyframes cesRowIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .ces-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 20px;
+    border: 1px solid var(--ces-border);
+    border-radius: 8px;
+    background: var(--ces-surface);
+    margin-bottom: 8px;
+    text-decoration: none;
+    opacity: 0;
+    animation: cesRowIn 320ms var(--ease-out) both;
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
+  }
+  .ces-row:hover {
+    background: var(--ces-surface2);
+    border-color: var(--ces-border-hi);
+    transform: translateX(2px);
+  }
+
+  .ces-row-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--ces-gold-dim);
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .ces-row-content { min-width: 0; }
+  .ces-row-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ces-text);
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .ces-row-desc {
+    font-size: 12px;
+    color: var(--ces-text-muted);
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ces-row-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: var(--ces-red);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
+  }
+  .ces-row-btn:hover { background: var(--ces-red-dark); transform: translateX(1px); }
+  .ces-row-btn:focus-visible { outline: 2px solid var(--ces-gold); outline-offset: 2px; }
+
+  .ces-no-link .ces-row-name { color: var(--ces-text-dim); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    .ces-hero { padding: 40px var(--sp-4) 36px; }
+    .ces-logo-img { width: 100px; height: 100px; margin-bottom: 20px; }
+    .ces-body { padding: 28px var(--sp-4) 80px; }
+    .ces-row { grid-template-columns: 28px 1fr; gap: 12px; padding: 16px; }
+    .ces-row-btn { grid-column: 2; justify-self: start; margin-top: 4px; }
+    .ces-row-desc { white-space: normal; }
+  }
 </style>
 </head>
 <body>
@@ -1349,6 +1605,9 @@
     </div>
     <div class="nav-item" onclick="showPage('territories')">
       <span class="icon">🗺️</span> Territory Map
+    </div>
+    <div class="nav-item" onclick="showPage('ces')">
+      <span class="icon">💀</span> CES Assets
     </div>
   </nav>
 </nav>
@@ -2630,6 +2889,35 @@
     <div id="territory-view"></div>
   </div>
 
+  <!-- ═══════════════════════════════════════════
+       CES — CARE ELEVATION SQUAD
+  ═══════════════════════════════════════════ -->
+  <div id="page-ces" class="page">
+
+    <!-- Hero -->
+    <div class="ces-hero">
+      <img src="ces-logo.png" class="ces-logo-img" alt="Care Elevation Squad">
+      <div class="ces-hero-text">
+        <div class="ces-eyebrow">Noris Medical</div>
+        <h1 class="ces-title">
+          <span class="ces-title-abbr">CES</span>
+          Care Elevation Squad
+        </h1>
+        <div class="ces-rule"></div>
+        <p class="ces-tagline">Classified resources for the field. Playbooks, calendars, SOPs, and pathways — all in one place.</p>
+      </div>
+    </div>
+
+    <!-- Resource manifest -->
+    <div class="ces-body">
+      <div class="ces-manifest-label">Mission Assets</div>
+      <div id="ces-resources">
+        <div class="ces-loading">Loading assets</div>
+      </div>
+    </div>
+
+  </div>
+
 </div><!-- /main -->
 
 <!-- ─── MOBILE SIDEBAR OVERLAY ─── -->
@@ -2950,6 +3238,9 @@
 
     // Render territory map when switching to that page
     if (id === 'territories') renderTerritoryView();
+
+    // Load CES assets on first visit
+    if (id === 'ces') loadCESAssets();
   }
 
   // ─── Education sub-tabs ───
@@ -3491,6 +3782,69 @@
     buildSearchIndex();
     renderAnnouncements();
   });
+
+  // ─── CES Assets ───────────────────────────────────────────────────────────
+  let cesLoaded = false;
+
+  async function loadCESAssets() {
+    if (cesLoaded) return;
+    cesLoaded = true;
+
+    const container = document.getElementById('ces-resources');
+    const SHEET_ID  = '1-v7XZzRyT_64c538b0yFVlSiQ0nGJdbQQp-N0ebS9DI';
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=CES%20Assets`;
+
+    try {
+      const res  = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
+      const cols = json.table.cols || [];
+      const rows = json.table.rows || [];
+
+      // Detect columns by header label
+      let nameCol = 0, descCol = -1, linkCol = -1;
+      cols.forEach((c, i) => {
+        const l = (c.label || '').toLowerCase();
+        if (l.includes('name') || l.includes('resource') || l.includes('title')) nameCol = i;
+        if (l.includes('desc') || l.includes('note') || l.includes('detail'))    descCol = i;
+        if (l.includes('link') || l.includes('url') || l.includes('href'))       linkCol = i;
+      });
+
+      // Fallback: if no link col detected, scan for any cell containing http
+      if (linkCol === -1) {
+        cols.forEach((c, i) => { if (i !== nameCol && i !== descCol) linkCol = i; });
+      }
+
+      const assets = rows
+        .map(r => ({
+          name: r.c?.[nameCol]?.v ?? '',
+          desc: descCol >= 0 ? (r.c?.[descCol]?.v ?? '') : '',
+          link: linkCol >= 0 ? (r.c?.[linkCol]?.v ?? '') : '',
+        }))
+        .filter(a => String(a.name).trim());
+
+      if (!assets.length) throw new Error('No rows');
+
+      container.innerHTML = assets.map((a, i) => `
+        <div class="ces-row${a.link ? '' : ' ces-no-link'}"
+             style="animation-delay:${i * 55}ms">
+          <span class="ces-row-num">${String(i + 1).padStart(2, '0')}</span>
+          <div class="ces-row-content">
+            <div class="ces-row-name">${a.name}</div>
+            ${a.desc ? `<div class="ces-row-desc">${a.desc}</div>` : ''}
+          </div>
+          ${a.link
+            ? `<a href="${a.link}" target="_blank" rel="noopener noreferrer" class="ces-row-btn">Open <span aria-hidden="true">→</span></a>`
+            : `<span class="ces-row-btn" style="opacity:0.3;cursor:default;pointer-events:none">—</span>`}
+        </div>
+      `).join('');
+
+    } catch (err) {
+      cesLoaded = false; // allow retry
+      container.innerHTML = `<div class="ces-error">⚠️ Could not load CES Assets. Check that the Google Sheet tab is named <strong>CES Assets</strong> and is publicly shared.<br><small style="opacity:.6">${err.message}</small></div>`;
+    }
+  }
 </script>
 
 <!-- MOBILE QUICK-ACCESS DOCK (hidden on desktop via CSS) -->
