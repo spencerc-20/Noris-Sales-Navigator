@@ -3612,7 +3612,7 @@
     { agent: 'Ivan',        team: 'EAST',       territory: 'Florida',               notes: '' },
     { agent: 'Misha',       team: 'CENTRAL',    territory: 'Georgia',               notes: '' },
     { agent: 'Emma',        team: 'INSIDE',     territory: 'Hawaii',                notes: '' },
-    { agent: 'Mandy',       team: 'TX',         territory: 'Houston, TX',           notes: '' },
+    { agent: 'Open',        team: 'TX',         territory: 'Houston, TX',           notes: '' },
     { agent: 'Constance',   team: 'INSIDE',     territory: 'Idaho',                 notes: '' },
     { agent: 'Sam',         team: 'CENTRAL',    territory: 'Illinois',              notes: '' },
     { agent: 'Michelle',    team: 'INSIDE',     territory: 'Indiana',               notes: '' },
@@ -3671,7 +3671,7 @@
     DAN:        { bg: '#fde68a', text: '#713f12', border: '#fcd34d', badge: '#92400e' },
   };
 
-  let territoryData = JSON.parse(localStorage.getItem('territoryData_v4') || 'null') || DEFAULT_TERRITORY_DATA;
+  let territoryData = JSON.parse(localStorage.getItem('territoryData_v5') || 'null') || DEFAULT_TERRITORY_DATA;
   let activeTeamFilter = 'ALL';
   let adminUnlocked = false;
 
@@ -3802,7 +3802,7 @@
   }
 
   function saveTerritoryData() {
-    localStorage.setItem('territoryData_v4', JSON.stringify(territoryData));
+    localStorage.setItem('territoryData_v5', JSON.stringify(territoryData));
   }
 
   function copyTerritoryCode() {
