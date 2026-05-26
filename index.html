@@ -3138,7 +3138,7 @@
   // which are always plain numbers and always come through correctly.
   async function fetchSeatAvailability() {
     const SHEET_ID = '1-v7XZzRyT_64c538b0yFVlSiQ0nGJdbQQp-N0ebS9DI';
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Upcoming%20Courses`;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=444963405`;
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -3325,6 +3325,9 @@
 
     // Load CES assets on first visit
     if (id === 'ces') loadCESAssets();
+
+    // Refresh seat availability whenever Education tab is opened
+    if (id === 'education') fetchSeatAvailability();
   }
 
   // ─── Education sub-tabs ───
